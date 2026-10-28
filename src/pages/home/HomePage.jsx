@@ -84,12 +84,13 @@ function HeroCopy({ slide, className, darkText = false, compact = false }) {
   );
 }
 
-function HeroSlideView({ slide }) {
+function HeroSlideView({ slide, active }) {
+  const imageLoading = active ? 'eager' : 'lazy';
   if (slide.layout === 'split-images') {
     return (
       <div className="absolute inset-0 grid grid-cols-2">
         <div className="group relative overflow-hidden">
-          <img className="h-full w-full object-cover object-center" src={slide.image} alt={slide.imageAlt} />
+          <img className="h-full w-full object-cover object-center" src={slide.image} alt={slide.imageAlt} loading={imageLoading} fetchPriority={active ? 'high' : 'auto'} decoding="async" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/10" />
           <HeroCopy
             slide={slide}
@@ -98,7 +99,7 @@ function HeroSlideView({ slide }) {
           />
         </div>
         <div className="relative overflow-hidden">
-          <img className="h-full w-full object-cover object-center" src={slide.secondaryImage} alt={slide.secondaryImageAlt} />
+          <img className="h-full w-full object-cover object-center" src={slide.secondaryImage} alt={slide.secondaryImageAlt} loading={imageLoading} decoding="async" />
           <div className="absolute inset-0 bg-black/10" />
           <span className="absolute right-5 top-5 text-[8px] font-semibold tracking-[.18em] text-white sm:right-8 sm:top-8">
             KYREONS / 002
@@ -130,7 +131,7 @@ function HeroSlideView({ slide }) {
           </span>
         </div>
         <div className="relative min-h-[260px] overflow-hidden md:min-h-0">
-          <img className="absolute inset-0 h-full w-full object-cover object-[center_35%]" src={slide.image} alt={slide.imageAlt} />
+          <img className="absolute inset-0 h-full w-full object-cover object-[center_35%]" src={slide.image} alt={slide.imageAlt} loading={imageLoading} fetchPriority={active ? 'high' : 'auto'} decoding="async" />
           <span className="absolute bottom-5 right-5 text-[8px] font-semibold tracking-[.16em] text-white">
             MADE TO BE YOURS
           </span>
@@ -158,9 +159,9 @@ function HeroSlideView({ slide }) {
           </a>
         </div>
         <div className="grid min-h-[300px] grid-cols-[1.2fr_.8fr] grid-rows-2 gap-1.5 p-1.5 md:min-h-0">
-          <img className="row-span-2 h-full min-h-0 w-full object-cover" src={slide.image} alt={slide.imageAlt} />
-          <img className="h-full min-h-0 w-full object-cover" src={slide.secondaryImage} alt={slide.secondaryImageAlt} />
-          <img className="h-full min-h-0 w-full object-cover" src={slide.tertiaryImage} alt={slide.tertiaryImageAlt} />
+          <img className="row-span-2 h-full min-h-0 w-full object-cover" src={slide.image} alt={slide.imageAlt} loading={imageLoading} fetchPriority={active ? 'high' : 'auto'} decoding="async" />
+          <img className="h-full min-h-0 w-full object-cover" src={slide.secondaryImage} alt={slide.secondaryImageAlt} loading={imageLoading} decoding="async" />
+          <img className="h-full min-h-0 w-full object-cover" src={slide.tertiaryImage} alt={slide.tertiaryImageAlt} loading={imageLoading} decoding="async" />
         </div>
         <span className="absolute bottom-4 right-5 z-20 text-[8px] font-semibold tracking-[.16em] text-white/80">
           KYREONS / CHAPTER 04
@@ -171,7 +172,7 @@ function HeroSlideView({ slide }) {
 
   return (
     <div className="absolute inset-0">
-      <img className="absolute inset-0 h-full w-full object-cover object-[center_44%] saturate-[.7] max-[650px]:object-[57%_center]" src={slide.image} alt={slide.imageAlt} />
+      <img className="absolute inset-0 h-full w-full object-cover object-[center_44%] saturate-[.7] max-[650px]:object-[57%_center]" src={slide.image} alt={slide.imageAlt} loading={imageLoading} fetchPriority={active ? 'high' : 'auto'} decoding="async" />
       <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-black/10" />
       <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/35 to-transparent" />
       <HeroCopy
@@ -294,7 +295,7 @@ export default function HomePage({
               className={`absolute inset-0 ${isActive || isNext || isPrevious ? '' : 'pointer-events-none'}`}
               style={slideStyle}
             >
-              <HeroSlideView slide={slide} />
+              <HeroSlideView slide={slide} active={isActive} />
             </div>
           );
         })}
