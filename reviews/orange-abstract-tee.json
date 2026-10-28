@@ -1,0 +1,7 @@
+[
+  { "id": "orange-review-1", "name": "Ananya D.", "location": "Mumbai, IN", "rating": 5, "date": "2026-09-24", "comment": "The orange graphic pops beautifully against the light fabric. Very comfortable and easy to wear." },
+  { "id": "orange-review-2", "name": "Ethan P.", "location": "London, UK", "rating": 4, "date": "2026-09-02", "comment": "Nice oversized shape and a clean print. It works well with my everyday outfits." },
+  { "id": "orange-review-3", "name": "Sana F.", "location": "Hyderabad, IN", "rating": 5, "date": "2026-08-19", "comment": "The fabric feels soft and the color is just as pictured. One of my favorite graphic tees now." },
+  { "id": "orange-review-4", "name": "Lucas M.", "location": "Melbourne, AU", "rating": 4, "date": "2026-07-31", "comment": "Good shape and a subtle, well-placed brand detail. I would happily buy another color." },
+  { "id": "orange-review-5", "name": "Ishita K.", "location": "Jaipur, IN", "rating": 5, "date": "2026-07-08", "comment": "Light, comfortable, and still structured. The artwork makes a simple outfit feel considered." }
+]

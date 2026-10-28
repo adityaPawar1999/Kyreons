@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 900" fill="none">
+  <rect width="720" height="900" fill="#edede7"/>
+  <path d="M360 270c-48 0-86-39-86-87s38-86 86-86 86 38 86 86-38 87-86 87Zm-126 45 78-30 48 35 48-35 78 30 86 92-76 69-45-44v267H255V432l-45 44-76-69 100-92Z" fill="#d7d7ce"/>
+  <text x="360" y="765" fill="#777970" font-family="Arial,sans-serif" font-size="24" letter-spacing="7" text-anchor="middle">KYREONS</text>
+  <text x="360" y="808" fill="#92938b" font-family="Arial,sans-serif" font-size="12" letter-spacing="3" text-anchor="middle">YOUR IMAGE GOES HERE</text>
+</svg>

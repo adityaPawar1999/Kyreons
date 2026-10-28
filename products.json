@@ -1,0 +1,228 @@
+[
+  {
+  "id": "kyreons-sunburst-tee",
+  "name": "Kyreons Sunburst Tee",
+  "category": "t-shirts",
+  "tags": [
+    "oversized",
+    "asian-streetwear",
+    "minimalist",
+    "graphic-tee",
+    "sunburst-art",
+    "teal",
+    "modern-streetwear",
+    "new-arrival"
+  ],
+  "badge": "FRESH PERSPECTIVE",
+  "price": 1199,
+  "description": "Discover understated streetwear with the KYREONS Sunburst Tee. Crafted around a soft ivory aesthetic, this oversized T-shirt features a distinctive teal rectangular graphic, a bold white sunburst motif, and a warm yellow circular accent. The KYREONS signature typography adds a refined brand identity without overwhelming the design. Clean, contemporary, and effortlessly versatile, this piece is made for those who believe that simplicity can make a statement. Never just ordinary.",
+  "details": [
+    "Oversized fit with a relaxed, contemporary silhouette",
+    "Ivory base for a clean, minimalist aesthetic",
+    "Teal rectangular chest graphic with a white sunburst motif",
+    "Yellow circular accent for a subtle pop of color",
+    "KYREONS brand typography integrated into the artwork",
+    "Small chest placement for a refined, understated look",
+    "Classic ribbed crew neckline with short sleeves",
+    "Black KYREONS signature collar label",
+    "Suitable for everyday wear and modern streetwear styling"
+  ],
+  "material": "Cotton — confirm fabric composition with supplier",
+  "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL"
+  ],
+  "colors": [
+    {
+      "name": "Ivory Teal Sunburst",
+      "hex": "#F5F0E5"
+    }
+  ],
+  "images": [
+    "/sunburst-tee/SBT1.png",
+    "/sunburst-tee/SBT2.png",
+    "/sunburst-tee/SBT3.png",
+    "/sunburst-tee/SBT4.png",
+    "/sunburst-tee/SBT5.png"
+  ]
+},
+  
+ {
+    "id": "orange-abstract-tee",
+    "name": "Orange Abstract Graphic Tee",
+    "category": "t-shirts",
+    "tags": [
+      "oversized",
+      "minimalist",
+      "abstract",
+      "streetwear",
+      "korean-fashion",
+      "new-arrival"
+    ],
+    "badge": "ART IN MOTION",
+    "price": 1299,
+    "description": "Redefine everyday streetwear with the KYREONS Orange Abstract Graphic Tee. Designed with a warm off-white base and a bold orange geometric graphic, this T-shirt combines minimalist aesthetics with contemporary Korean-inspired fashion. The relaxed oversized silhouette, premium-looking finish, and signature KYREONS branding create a distinctive statement piece for modern wardrobes. Never just ordinary.",
+    "details": [
+      "Oversized fit with a relaxed silhouette",
+      "Warm off-white base with a bold orange abstract graphic",
+      "Minimal KYREONS branding beneath the front print",
+      "Classic ribbed crew neckline with short sleeves",
+      "Black KYREONS branded collar label",
+      "Clean sleeve hems and bottom stitching",
+      "Ideal for casual wear and modern streetwear styling"
+    ],
+    "material": "Cotton — confirm fabric composition with supplier",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      {
+        "name": "Off-White / Orange",
+        "hex": "#F5F0E5"
+      }
+    ],
+    "images": [
+      "/orange-abstract-tee/OAT5.png",
+      "/orange-abstract-tee/OAT2.png",
+      "/orange-abstract-tee/OAT3.png",
+      "/orange-abstract-tee/OAT1.png",
+      "/orange-abstract-tee/OAT4.png",
+      "/orange-abstract-tee/OAT6.png"
+    ]
+  },
+  
+  {
+  "id": "kyreons-botanical-abstract-tee",
+  "name": "Kyreons Botanical Abstract Tee",
+  "category": "t-shirts",
+  "tags": [
+    "oversized",
+    "asian-streetwear",
+    "botanical-art",
+    "abstract-graphic",
+    "artistic",
+    "minimalist",
+    "streetwear",
+    "new-arrival"
+  ],
+  "badge": "ART IN MOTION",
+  "price": 1299,
+  "description": "Make a statement with the KYREONS Botanical Abstract Tee, a contemporary streetwear essential inspired by modern art and organic forms. Featuring a warm ivory base, a striking terracotta vertical panel, distressed black botanical artwork, and fine technical linework, this T-shirt balances artistic expression with minimalist design. Finished with subtle KYREONS branding and the signature 'Never Just Ordinary' identity, it brings a refined, modern edge to everyday streetwear.",
+  "details": [
+    "Oversized fit with a relaxed, contemporary silhouette",
+    "Warm ivory base for a premium, understated appearance",
+    "Vertical terracotta graphic panel with distressed black botanical artwork",
+    "Fine geometric lines and technical design accents",
+    "Minimal KYREONS typography with signature brand messaging",
+    "Classic crew neckline with short sleeves",
+    "KYREONS signature label on the collar",
+    "Versatile artistic design for modern streetwear styling"
+  ],
+  "material": "Cotton — confirm fabric composition with supplier",
+  "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL"
+  ],
+  "colors": [
+    {
+      "name": "Ivory Terracotta",
+      "hex": "#F3EBDD"
+    }
+  ],
+  "images": [
+    "/botanical-abstract-tee/BAT1.png",
+    "/botanical-abstract-tee/BAT2.png",
+    "/botanical-abstract-tee/BAT3.png",
+    "/botanical-abstract-tee/BAT4.png",
+    "/botanical-abstract-tee/BAT5.png"
+  ]
+},
+  {
+    "id": "kyreons-techno-art-tee",
+    "name": "Kyreons Techno Art Tee",
+    "category": "t-shirts",
+    "tags": [
+      "oversized",
+      "asian-streetwear",
+      "techno-art",
+      "graphic-tee",
+      "monochrome",
+      "minimalist",
+      "new-arrival"
+    ],
+    "badge": "CULTURE IN MOTION",
+    "price": 1299,
+    "description": "Redefine modern streetwear with the KYREONS Techno Art Tee. Designed with a crisp white base, an intricate black vertical graphic panel, and distinctive Asian-inspired typography, this oversized T-shirt combines contemporary urban fashion with artistic expression. Its monochrome palette and detailed artwork create a bold yet minimalist aesthetic, making it perfect for those who stand apart from the ordinary.",
+    "details": [
+      "Oversized fit with a relaxed, contemporary silhouette",
+      "Premium-looking white base with intricate black techno-art graphics",
+      "Bold vertical patterned panel running down the front",
+      "Asian-inspired typography for a distinctive visual identity",
+      "Classic crew neckline with short sleeves",
+      "Minimalist monochrome design for versatile styling",
+      "KYREONS signature brand label on the collar",
+      "Designed for modern streetwear and everyday styling"
+    ],
+    "material": "Cotton — confirm fabric composition with supplier",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      {
+        "name": "Monochrome White",
+        "hex": "#F5F5F5"
+      }
+    ],
+    "images": [
+      "/verticle-abstract-tee/VLT1.png",
+      "/verticle-abstract-tee/VLT2.png",
+      "/verticle-abstract-tee/VLT3.png",
+      "/verticle-abstract-tee/VLT4.png",
+      "/verticle-abstract-tee/VLT5.png"
+    ]
+  },
+  
+  {
+    "id": "atlas-tribal-tee",
+    "name": "Atlas Tribal Tee",
+    "category": "t-shirts",
+    "tags": ["oversized", "graphic", "handcrafted", "cultural-inspired", "new arrival"],
+    "badge": "CULTURE IN MOTION",
+    "price": 1299,
+    "rating": 0,
+    "description": "Inspired by global cultural patterns and modern Asian streetwear, the Atlas Tribal Tee brings artistic detail to a clean, contemporary silhouette. Featuring a crisp white base, distinctive geometric patterns in forest green, black, and earthy brown, and a statement sleeve design, it balances bold expression with everyday versatility. Made for those who define their own style.",
+    "details": [
+      "Oversized fit with a relaxed silhouette",
+      "White base with distinctive geometric pattern panels",
+      "Statement patterned sleeve and side detailing",
+      "Classic crew neckline with short sleeves",
+      "Designed for everyday styling and modern streetwear"
+    ],
+    "material": "Cotton — confirm fabric composition with supplier",
+    "sizes": ["S", "M", "L", "XL", "XXL"],
+    "colors": [
+      {"name": "Patterned White", "hex": "#F5F4F0"}
+    ],
+    "images": [
+      "/Product Images/atlas-tribal-tee/a2.png",
+      "/Product Images/atlas-tribal-tee/a1.png",
+      "/Product Images/atlas-tribal-tee/a3.png",
+      "/Product Images/atlas-tribal-tee/a4.png"
+    ]
+  }
+
+]

@@ -1,0 +1,7 @@
+[
+  { "id": "techno-review-1", "name": "Jae-min P.", "location": "Busan, KR", "rating": 5, "date": "2026-09-21", "comment": "The vertical artwork is detailed and striking. The monochrome palette makes it easy to style." },
+  { "id": "techno-review-2", "name": "Arjun V.", "location": "Chennai, IN", "rating": 4, "date": "2026-09-05", "comment": "Comfortable oversized fit with a print that feels different from the usual graphic tee." },
+  { "id": "techno-review-3", "name": "Mina C.", "location": "Taipei, TW", "rating": 5, "date": "2026-08-14", "comment": "The black and white design is crisp and the fabric feels great. Exactly the statement piece I wanted." },
+  { "id": "techno-review-4", "name": "Dev S.", "location": "Kolkata, IN", "rating": 5, "date": "2026-07-27", "comment": "Excellent fit and thoughtful graphic placement. It looks good tucked in or worn loose." },
+  { "id": "techno-review-5", "name": "Noah B.", "location": "Toronto, CA", "rating": 4, "date": "2026-07-03", "comment": "A versatile tee with a lot of visual detail. The relaxed cut is comfortable without feeling too baggy." }
+]
