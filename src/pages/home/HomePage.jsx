@@ -82,7 +82,7 @@ function HeroCopy({ slide, className, darkText = false, compact = false }) {
   );
 }
 
-function HeroSlideView({ slide, active }) {
+function DesktopHeroSlideView({ slide, active }) {
   const imageLoading = active ? 'eager' : 'lazy';
   if (slide.layout === 'split-images') {
     return (
@@ -184,6 +184,36 @@ function HeroSlideView({ slide, active }) {
   );
 }
 
+function HeroSlideView({ slide, active }) {
+  return (
+    <>
+      <div className="absolute inset-0 min-[651px]:hidden">
+        <img
+          className="absolute inset-0 h-full w-full object-cover object-[center_38%]"
+          src={slide.image}
+          alt={slide.imageAlt}
+          loading={active ? 'eager' : 'lazy'}
+          fetchPriority={active ? 'high' : 'auto'}
+          decoding="async"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/10" />
+        <div className="absolute inset-x-0 bottom-0 h-[78%] bg-gradient-to-t from-black/45 to-transparent" />
+        <HeroCopy
+          slide={slide}
+          className="absolute inset-x-0 bottom-[88px] px-6 pb-2"
+          compact
+        />
+        <span className="absolute right-5 top-5 text-[7px] font-semibold tracking-[.18em] text-white/75">
+          KYREONS / {String(heroSlides.indexOf(slide) + 1).padStart(3, '0')}
+        </span>
+      </div>
+      <div className="absolute inset-0 max-[650px]:hidden">
+        <DesktopHeroSlideView slide={slide} active={active} />
+      </div>
+    </>
+  );
+}
+
 export default function HomePage({
   onOpen,
   onQuickAdd,
@@ -276,7 +306,7 @@ export default function HomePage({
       {/* Hero carousel: displays the four campaign slide layouts. */}
       <section
         id="home"
-        className="relative isolate h-[min(690px,70vw)] min-h-[490px] overflow-hidden bg-neutral-900 text-white max-[900px]:h-[65vw] max-[900px]:min-h-[510px] max-[650px]:h-[calc(79svh-89px)] max-[650px]:min-h-[450px] max-[650px]:max-h-[620px]"
+        className="relative isolate h-[min(690px,70vw)] min-h-[490px] overflow-hidden bg-neutral-900 text-white max-[900px]:h-[65vw] max-[900px]:min-h-[510px] max-[650px]:h-[min(76svh,680px)] max-[650px]:min-h-[520px] max-[650px]:max-h-[680px]"
         aria-roledescription="carousel"
         aria-label="Kyreons campaign slides"
       >
