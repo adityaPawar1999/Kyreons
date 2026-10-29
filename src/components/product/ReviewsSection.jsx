@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 export default function ReviewsSection({ product }) {
   const [showAllReviews, setShowAllReviews] = useState(false);
@@ -19,13 +21,13 @@ export default function ReviewsSection({ product }) {
         <aside className="reviews-overview">
           <div className="reviews-score">
             <strong>{product.rating.toFixed(1)}</strong>
-            <div><span className="review-stars" aria-label={`${product.rating} out of 5 stars`}>★★★★★</span><small>AVERAGE RATING</small></div>
+            <div><span className="review-stars" role="img" aria-label={`${product.rating} out of 5 stars`}>{Array.from({ length: 5 }, (_, index) => index < Math.round(product.rating) ? <StarIcon key={index} /> : <StarBorderIcon key={index} />)}</span><small>AVERAGE RATING</small></div>
           </div>
           <div className="rating-breakdown">
             {[5, 4, 3, 2, 1].map((stars) => {
               const count = reviews.filter((review) => review.rating === stars).length;
               const percent = reviews.length ? (count / reviews.length) * 100 : 0;
-              return <div className="rating-row" key={stars}><span>{stars} <b>★</b></span><div><i style={{ width: `${percent}%` }} /></div><small>{count}</small></div>;
+              return <div className="rating-row" key={stars}><span>{stars} <b><StarIcon aria-hidden="true" /></b></span><div><i style={{ width: `${percent}%` }} /></div><small>{count}</small></div>;
             })}
           </div>
           <span className="reviews-total">BASED ON {reviews.length} CUSTOMER REVIEWS</span>
@@ -34,7 +36,7 @@ export default function ReviewsSection({ product }) {
           {visibleReviews.map((review) => (
             <article className="review-card" key={review.id}>
               <div className="review-card-top">
-                <span className="review-stars" aria-label={`${review.rating} out of 5 stars`}>{'★'.repeat(review.rating)}{'☆'.repeat(Math.max(0, 5 - review.rating))}</span>
+                <span className="review-stars" role="img" aria-label={`${review.rating} out of 5 stars`}>{Array.from({ length: 5 }, (_, index) => index < review.rating ? <StarIcon key={index} /> : <StarBorderIcon key={index} />)}</span>
                 <time dateTime={review.date}>{new Date(`${review.date}T00:00:00`).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</time>
               </div>
               <p>“{review.comment}”</p>

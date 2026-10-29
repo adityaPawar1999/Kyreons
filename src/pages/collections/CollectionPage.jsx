@@ -1,10 +1,22 @@
 import { useMemo, useState } from 'react';
-import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ProductGrid from '../../components/product/ProductGrid.jsx';
 import NotFoundPage from '../not-found/NotFoundPage.jsx';
 import { products } from '../../utils/store.js';
 
 const collectionSettings = {
+  all: {
+    title: 'Every piece, all in one place.',
+    eyebrow: 'THE COMPLETE KYREONS COLLECTION',
+    description: 'Browse every piece in the collection, then narrow it down by style and finish.',
+    imageAlt: 'A piece from the Kyreons collection',
+    matches: () => true,
+    filters: [
+      ['t-shirts', 'T-Shirts'],
+      ['oversized', 'Oversized'],
+      ['handcrafted', 'Hand finished'],
+    ],
+  },
   shirts: {
     title: 'Shirts for your own world.',
     eyebrow: 'THE KYREONS TEE DEPARTMENT',
@@ -53,7 +65,6 @@ export default function CollectionPage({ type, onOpen, onQuickAdd, wishlist, onT
   const settings = collectionSettings[type];
   const [activeFilter, setActiveFilter] = useState('all');
   const [sort, setSort] = useState('featured');
-  const [showAll, setShowAll] = useState(false);
 
   const collectionProducts = useMemo(
     () => products.filter(settings?.matches ?? (() => false)),
@@ -63,23 +74,23 @@ export default function CollectionPage({ type, onOpen, onQuickAdd, wishlist, onT
   const visibleProducts = useMemo(() => {
     const filtered = activeFilter === 'all'
       ? collectionProducts
-      : collectionProducts.filter((product) => product.tags.includes(activeFilter));
+      : collectionProducts.filter((product) => product.category === activeFilter || product.tags.includes(activeFilter));
 
     return sortProducts(filtered, sort);
   }, [activeFilter, collectionProducts, sort]);
 
   if (!settings) return <NotFoundPage />;
 
-  const shownProducts = showAll ? visibleProducts : visibleProducts.slice(0, 6);
+  const shownProducts = visibleProducts;
   const leadImage = collectionProducts[0]?.images[0] || '/placeholder.svg';
-  const collectionName = type === 'shirts' ? 'T-SHIRTS' : type.toUpperCase();
+  const collectionName = type === 'all' ? 'SHOP ALL' : type === 'shirts' ? 'T-SHIRTS' : type.toUpperCase();
 
   const filters = [
     ['all', type === 'shirts' ? 'All tees' : 'All pieces', collectionProducts.length],
-    ...settings.filters.map(([tag, label]) => [
+      ...settings.filters.map(([tag, label]) => [
       tag,
       label,
-      collectionProducts.filter((product) => product.tags.includes(tag)).length,
+        collectionProducts.filter((product) => product.category === tag || product.tags.includes(tag)).length,
     ]).filter(([, , count]) => count > 0),
   ];
 
@@ -94,7 +105,7 @@ export default function CollectionPage({ type, onOpen, onQuickAdd, wishlist, onT
       <header className="grid items-center gap-6 pb-7 md:grid-cols-[1.05fr_.95fr] md:gap-10 md:pb-10">
         <div>
           <p className="mb-4 flex items-center gap-2 text-[9px] font-semibold tracking-[0.17em] text-neutral-500">
-            <span className="text-lime-600" aria-hidden="true">✳</span>
+            <AutoAwesomeIcon className="text-lime-600" fontSize="small" aria-hidden="true" />
             {settings.eyebrow}
           </p>
           <h1 className="max-w-2xl font-display text-5xl font-medium leading-[.95] tracking-[-.075em] text-neutral-900 dark:text-white sm:text-6xl lg:text-7xl">
@@ -124,10 +135,7 @@ export default function CollectionPage({ type, onOpen, onQuickAdd, wishlist, onT
               key={value}
               type="button"
               className={`shrink-0 border-b pb-2 text-[9px] font-semibold uppercase tracking-[.1em] transition-colors ${activeFilter === value ? 'border-neutral-900 text-neutral-900 dark:border-white dark:text-white' : 'border-transparent text-neutral-500 hover:text-neutral-900 dark:hover:text-white'}`}
-              onClick={() => {
-                setActiveFilter(value);
-                setShowAll(false);
-              }}
+              onClick={() => setActiveFilter(value)}
             >
               {label} <span className="ml-1 text-neutral-400">{count}</span>
             </button>
@@ -139,10 +147,7 @@ export default function CollectionPage({ type, onOpen, onQuickAdd, wishlist, onT
           <select
             className="cursor-pointer bg-transparent py-1 text-[9px] text-neutral-900 outline-none dark:text-white"
             value={sort}
-            onChange={(event) => {
-              setSort(event.target.value);
-              setShowAll(false);
-            }}
+            onChange={(event) => setSort(event.target.value)}
           >
             <option value="featured">FEATURED</option>
             <option value="price-low">PRICE: LOW TO HIGH</option>
@@ -159,21 +164,6 @@ export default function CollectionPage({ type, onOpen, onQuickAdd, wishlist, onT
         onToggleWishlist={onToggleWishlist}
       />
 
-      {visibleProducts.length > 6 && (
-        <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-neutral-200 pt-5 text-[8px] font-semibold tracking-[.12em] text-neutral-500 dark:border-neutral-700">
-          <span>
-            {showAll ? `ALL ${collectionName}` : `SHOWING 06 OF ${String(visibleProducts.length).padStart(2, '0')}`}
-          </span>
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 border-b border-current pb-1 text-neutral-900 dark:text-white"
-            onClick={() => setShowAll((value) => !value)}
-          >
-            {showAll ? 'SHOW LESS' : 'SEE MORE'} <ArrowOutwardIcon fontSize="small" />
-          </button>
-          <span>TAKE YOUR TIME. FIND YOUR FIT.</span>
-        </div>
-      )}
     </section>
   );
 }

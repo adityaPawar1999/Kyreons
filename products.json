@@ -1,4 +1,53 @@
 [
+  
+  {
+    "id": "kyreons-techno-art-tee",
+    "name": "Kyreons Techno Art Tee",
+    "category": "t-shirts",
+    "tags": [
+      "oversized",
+      "asian-streetwear",
+      "techno-art",
+      "graphic-tee",
+      "monochrome",
+      "minimalist",
+      "new-arrival"
+    ],
+    "badge": "CULTURE IN MOTION",
+    "price": 1299,
+    "description": "Redefine modern streetwear with the KYREONS Techno Art Tee. Designed with a crisp white base, an intricate black vertical graphic panel, and distinctive Asian-inspired typography, this oversized T-shirt combines contemporary urban fashion with artistic expression. Its monochrome palette and detailed artwork create a bold yet minimalist aesthetic, making it perfect for those who stand apart from the ordinary.",
+    "details": [
+      "Oversized fit with a relaxed, contemporary silhouette",
+      "Premium-looking white base with intricate black techno-art graphics",
+      "Bold vertical patterned panel running down the front",
+      "Asian-inspired typography for a distinctive visual identity",
+      "Classic crew neckline with short sleeves",
+      "Minimalist monochrome design for versatile styling",
+      "KYREONS signature brand label on the collar",
+      "Designed for modern streetwear and everyday styling"
+    ],
+    "material": "Cotton — confirm fabric composition with supplier",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      {
+        "name": "Monochrome White",
+        "hex": "#F5F5F5"
+      }
+    ],
+    "images": [
+      "/verticle-abstract-tee/VLT1.jpeg",
+      "/verticle-abstract-tee/VLT2.jpeg",
+      "/verticle-abstract-tee/VLT3.jpeg",
+      "/verticle-abstract-tee/VLT4.jpeg"
+    ]
+  },
+  
   {
   "id": "kyreons-sunburst-tee",
   "name": "Kyreons Sunburst Tee",
@@ -42,11 +91,10 @@
     }
   ],
   "images": [
-    "/sunburst-tee/SBT1.png",
-    "/sunburst-tee/SBT2.png",
-    "/sunburst-tee/SBT3.png",
-    "/sunburst-tee/SBT4.png",
-    "/sunburst-tee/SBT5.png"
+    "/sunburst-tee/SBT1.jpeg",
+    "/sunburst-tee/SBT2.jpeg",
+    "/sunburst-tee/SBT3.jpeg",
+    "/sunburst-tee/SBT4.jpeg"
   ]
 },
   
@@ -89,12 +137,10 @@
       }
     ],
     "images": [
-      "/orange-abstract-tee/OAT5.png",
-      "/orange-abstract-tee/OAT2.png",
-      "/orange-abstract-tee/OAT3.png",
-      "/orange-abstract-tee/OAT1.png",
-      "/orange-abstract-tee/OAT4.png",
-      "/orange-abstract-tee/OAT6.png"
+      "/orange-abstract-tee/OAT1.jpeg",
+      "/orange-abstract-tee/OAT2.jpeg",
+      "/orange-abstract-tee/OAT3.jpeg",
+      "/orange-abstract-tee/OAT4.jpeg"
     ]
   },
   
@@ -140,89 +186,213 @@
     }
   ],
   "images": [
-    "/botanical-abstract-tee/BAT1.png",
-    "/botanical-abstract-tee/BAT2.png",
-    "/botanical-abstract-tee/BAT3.png",
-    "/botanical-abstract-tee/BAT4.png",
-    "/botanical-abstract-tee/BAT5.png"
+    "/botanical-abstract-tee/BAT1.jpeg",
+    "/botanical-abstract-tee/BAT2.jpeg",
+    "/botanical-abstract-tee/BAT3.jpeg",
+    "/botanical-abstract-tee/BAT4.jpeg"
   ]
 },
-  {
-    "id": "kyreons-techno-art-tee",
-    "name": "Kyreons Techno Art Tee",
-    "category": "t-shirts",
-    "tags": [
-      "oversized",
-      "asian-streetwear",
-      "techno-art",
-      "graphic-tee",
-      "monochrome",
-      "minimalist",
-      "new-arrival"
-    ],
-    "badge": "CULTURE IN MOTION",
-    "price": 1299,
-    "description": "Redefine modern streetwear with the KYREONS Techno Art Tee. Designed with a crisp white base, an intricate black vertical graphic panel, and distinctive Asian-inspired typography, this oversized T-shirt combines contemporary urban fashion with artistic expression. Its monochrome palette and detailed artwork create a bold yet minimalist aesthetic, making it perfect for those who stand apart from the ordinary.",
-    "details": [
-      "Oversized fit with a relaxed, contemporary silhouette",
-      "Premium-looking white base with intricate black techno-art graphics",
-      "Bold vertical patterned panel running down the front",
-      "Asian-inspired typography for a distinctive visual identity",
-      "Classic crew neckline with short sleeves",
-      "Minimalist monochrome design for versatile styling",
-      "KYREONS signature brand label on the collar",
-      "Designed for modern streetwear and everyday styling"
-    ],
-    "material": "Cotton — confirm fabric composition with supplier",
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
-    ],
-    "colors": [
-      {
-        "name": "Monochrome White",
-        "hex": "#F5F5F5"
-      }
-    ],
-    "images": [
-      "/verticle-abstract-tee/VLT1.png",
-      "/verticle-abstract-tee/VLT2.png",
-      "/verticle-abstract-tee/VLT3.png",
-      "/verticle-abstract-tee/VLT4.png",
-      "/verticle-abstract-tee/VLT5.png"
-    ]
-  },
-  
-  {
-    "id": "atlas-tribal-tee",
-    "name": "Atlas Tribal Tee",
-    "category": "t-shirts",
-    "tags": ["oversized", "graphic", "handcrafted", "cultural-inspired", "new arrival"],
-    "badge": "CULTURE IN MOTION",
-    "price": 1299,
-    "rating": 0,
-    "description": "Inspired by global cultural patterns and modern Asian streetwear, the Atlas Tribal Tee brings artistic detail to a clean, contemporary silhouette. Featuring a crisp white base, distinctive geometric patterns in forest green, black, and earthy brown, and a statement sleeve design, it balances bold expression with everyday versatility. Made for those who define their own style.",
-    "details": [
-      "Oversized fit with a relaxed silhouette",
-      "White base with distinctive geometric pattern panels",
-      "Statement patterned sleeve and side detailing",
-      "Classic crew neckline with short sleeves",
-      "Designed for everyday styling and modern streetwear"
-    ],
-    "material": "Cotton — confirm fabric composition with supplier",
-    "sizes": ["S", "M", "L", "XL", "XXL"],
-    "colors": [
-      {"name": "Patterned White", "hex": "#F5F4F0"}
-    ],
-    "images": [
-      "/Product Images/atlas-tribal-tee/a2.png",
-      "/Product Images/atlas-tribal-tee/a1.png",
-      "/Product Images/atlas-tribal-tee/a3.png",
-      "/Product Images/atlas-tribal-tee/a4.png"
-    ]
-  }
 
+{
+  "id": "olive-disorder-graphic-tee",
+  "name": "Olive Disorder Graphic T-Shirt",
+  "category": "t-shirts",
+  "tags": [
+    "regular-fit",
+    "graphic-tee",
+    "abstract-art",
+    "olive-green",
+    "minimalist",
+    "nature-inspired",
+    "korean-fashion",
+    "streetwear",
+    "ivory-t-shirt",
+    "new-arrival"
+  ],
+  "badge": "CREATIVE DISORDER",
+  "price": 1299,
+  "description": "Break away from the ordinary with the KYREONS Olive Disorder Graphic T-Shirt. Featuring an expressive olive-green abstract graphic inspired by organic shapes, playful symbols, and artistic linework, this design brings a distinctive creative edge to a clean ivory base. The front showcases a bold statement graphic with the word 'DIS-ORDER', creating a balance between unconventional art and minimalist streetwear. Finished with a classic crew neckline, short sleeves, clean hem stitching, and the signature KYREONS collar label, this versatile T-shirt is designed for those who appreciate individuality, contemporary Korean fashion, and understated artistic expression. Never just ordinary.",
+  "details": [
+    "Classic regular-fit silhouette",
+    "Soft ivory or off-white base colour",
+    "Bold olive-green abstract graphic on the front",
+    "Artistic linework inspired by organic shapes and playful symbols",
+    "Distinctive 'DIS-ORDER' typography beneath the artwork",
+    "Minimalist design with a creative streetwear aesthetic",
+    "Classic ribbed crew neckline",
+    "Short sleeves with clean hem stitching",
+    "Signature KYREONS branded collar label",
+    "Ideal for casual outfits, everyday wear, and Korean-inspired streetwear"
+  ],
+  "material": "Cotton — confirm fabric composition and GSM with supplier",
+  "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL"
+  ],
+  "colors": [
+    {
+      "name": "Ivory / Olive Green",
+      "hex": "#F5F0E6"
+    }
+  ],
+  "images": [
+    "/olive-disorder-graphic-tee/ODGT1.jpeg",
+    "/olive-disorder-graphic-tee/ODGT2.jpeg",
+    "/olive-disorder-graphic-tee/ODGT3.jpeg",
+    "/olive-disorder-graphic-tee/ODGT4.jpeg"
+  ]
+},
+{
+  "id": "green-botanical-tee",
+  "name": "Green Botanical Graphic Tee",
+  "category": "t-shirts",
+  "tags": [
+    "oversized",
+    "minimalist",
+    "botanical",
+    "abstract",
+    "streetwear",
+    "korean-fashion",
+    "nature-inspired",
+    "new-arrival"
+  ],
+  "badge": "NATURE EDIT",
+  "price": 1299,
+  "description": "Embrace a clean, contemporary streetwear aesthetic with the KYREONS Green Botanical Graphic Tee. Featuring a textured green botanical design against a warm off-white base, this T-shirt blends nature-inspired artwork with modern Korean streetwear. The oversized silhouette, minimalist chest graphic, statement back print, and signature KYREONS branding create a distinctive yet versatile piece for everyday styling. Designed for those who believe in standing apart. Never just ordinary.",
+  "details": [
+    "Oversized fit with a relaxed silhouette",
+    "Warm off-white base with a textured green botanical graphic",
+    "Minimal botanical square print on the front chest",
+    "Large statement botanical graphic on the back",
+    "KYREONS | NEVER JUST ORDINARY tagline beneath the graphics",
+    "Classic ribbed crew neckline with short sleeves",
+    "Black KYREONS branded collar label",
+    "Clean sleeve hems and bottom stitching",
+    "Nature-inspired artwork with a contemporary Korean streetwear aesthetic",
+    "Suitable for casual wear, streetwear outfits, and everyday styling"
+  ],
+  "material": "Cotton — confirm fabric composition with supplier",
+  "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL"
+  ],
+  "colors": [
+    {
+      "name": "Off-White / Botanical Green",
+      "hex": "#F5F0E5"
+    }
+  ],
+  "images": [
+    "/green-botanical-tee/GBT1.jpeg",
+    "/green-botanical-tee/GBT2.jpeg",
+    "/green-botanical-tee/GBT3.jpeg",
+    "/green-botanical-tee/GBT4.jpeg"
+  ]
+},
+{
+  "id": "hosanna-revival-pink-tee",
+  "name": "Hosanna Revival Oversized Tee",
+  "category": "t-shirts",
+  "tags": [
+    "oversized",
+    "graphic-tee",
+    "botanical",
+    "art-inspired",
+    "korean-fashion",
+    "streetwear",
+    "pink-t-shirt",
+    "new-arrival"
+  ],
+  "badge": "ARTISTIC EXPRESSION",
+  "price": 1299,
+  "description": "Express your individuality with the KYREONS Hosanna Revival Oversized Tee. Featuring a soft pastel pink base and intricate blue botanical illustrations, this statement T-shirt brings together vintage-inspired artwork and contemporary Korean streetwear aesthetics. The back showcases a distinctive twelve-panel composition of flowers, leaves, gardens, and landscapes, while the front features a smaller coordinating graphic for a clean, balanced look. Designed with a relaxed oversized silhouette and signature KYREONS styling, it is made for those who appreciate art, creativity, and understated individuality. Never just ordinary.",
+  "details": [
+    "Oversized fit with a relaxed, contemporary silhouette",
+    "Soft pastel pink colour",
+    "Blue twelve-panel botanical and landscape artwork on the back",
+    "Small coordinating botanical graphic on the left chest",
+    "Vintage-inspired illustration style",
+    "Classic ribbed crew neckline",
+    "Short sleeves with clean hem stitching",
+    "KYREONS-inspired streetwear aesthetic",
+    "Ideal for casual outfits, Korean streetwear, and everyday styling"
+  ],
+  "material": "Cotton — confirm fabric composition and GSM with supplier",
+  "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL"
+  ],
+  "colors": [
+    {
+      "name": "Pastel Pink / Botanical Blue",
+      "hex": "#EFA9B5"
+    }
+  ],
+  "images": [
+    "/hosanna-revival-pink-tee/HRP1.jpeg",
+    "/hosanna-revival-pink-tee/HRP2.jpeg",
+    "/hosanna-revival-pink-tee/HRP3.jpeg",
+    "/hosanna-revival-pink-tee/HRP4.jpeg"
+  ]
+},
+{
+  "id": "green-botanical-tee-graphic",
+  "name": "Minimal Teal Mountain Graphic T-Shirt",
+  "category": "t-shirts",
+  "tags": [
+    "regular-fit",
+    "graphic-tee",
+    "botanical",
+    "nature-inspired",
+    "minimalist",
+    "korean-fashion",
+    "streetwear",
+    "green-t-shirt",
+    "new-arrival"
+  ],
+  "badge": "NATURE IN MOTION",
+  "price": 1299,
+  "description": "Bring nature-inspired artistry into your everyday wardrobe with the KYREONS Green Botanical Graphic Tee. Featuring a rich forest-green botanical graphic against a clean ivory base, this T-shirt combines organic textures with contemporary Korean streetwear aesthetics. The front showcases a compact botanical design on the chest, while the back features a larger version of the same striking graphic for a coordinated, statement-making look. Finished with a classic crew neckline, short sleeves, and signature KYREONS branding, this versatile piece delivers a balance of minimalism, creativity, and modern style. Never just ordinary.",
+  "details": [
+    "Classic regular-fit silhouette",
+    "Ivory or off-white base colour",
+    "Small green botanical graphic on the front chest",
+    "Large matching botanical graphic on the back",
+    "Nature-inspired artwork with rich forest-green textures",
+    "Minimal KYREONS branding with the tagline 'Never Just Ordinary'",
+    "Classic ribbed crew neckline",
+    "Short sleeves with clean hem stitching",
+    "KYREONS branded collar label",
+    "Ideal for everyday wear, casual outfits, and Korean-inspired streetwear"
+  ],
+  "material": "Cotton — confirm fabric composition and GSM with supplier",
+  "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL"
+  ],
+  "colors": [
+    {
+      "name": "Ivory / Forest Green",
+      "hex": "#F5F0E6"
+    }
+  ],
+  "images": [
+    "/green-botanical-tee-graphic/GBTG1.jpeg",
+    "/green-botanical-tee-graphic/GBTG2.jpeg",
+    "/green-botanical-tee-graphic/GBTG3.jpeg",
+    "/green-botanical-tee-graphic/GBTG4.jpeg"
+  ]
+}
 ]

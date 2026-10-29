@@ -1,1 +1,53 @@
+html,
+body,
+#root,
+.storefront {
+  width: 100%;
+  max-width: 100%;
+}
+
+body,
+.storefront,
+.storefront > main {
+  overflow-x: clip;
+}
+
+.storefront > main,
+.storefront > main > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+img,
+video {
+  max-width: 100%;
+}
+
 @media(min-width:651px){.main-nav{gap:22px}}
+.product-search-input{display:flex;align-items:center;gap:8px;min-width:0;border-bottom:1px solid var(--line);color:var(--muted)}
+.product-search-input>svg{flex:none;width:16px;height:16px}
+.product-search-input input{width:100%;min-width:0;padding:9px 2px;border:0;outline:0;background:transparent;color:var(--text);font-size:8px;letter-spacing:.08em}
+.product-search-input input::placeholder{color:var(--muted);opacity:1}
+.announcement-star{width:12px;height:12px}
+.eyebrow .eyebrow-mark{width:14px;height:14px;flex:none}
+.ticker-sparkle{width:16px!important;height:16px!important;color:#1b1d17}
+.not-found-orbit>svg{position:absolute;top:9px;right:5px;width:28px;height:28px;padding:6px;border-radius:50%;background:var(--accent);color:#191b17}
+.site-footer .footer-bottom>div>a{display:inline-flex;align-items:center;gap:4px}
+.site-footer .footer-bottom>div>a svg{width:12px;height:12px}
+.navbar-search{width:clamp(120px,14vw,190px)}
+.shop-search{width:100%;max-width:260px}
+.bottom-search-bar{display:none}
+.mobile-theme-toggle{display:none}
+@media(max-width:650px){
+  .site-header{height:108px}
+  .nav-inner{position:relative;height:62px}
+  .navbar-search{position:absolute;top:66px;left:19px;right:19px;width:auto}
+  .main-nav{top:105px}
+  .shop-search{max-width:none}
+  .bottom-search-bar{position:fixed;z-index:40;right:0;bottom:0;left:0;display:block;padding:9px 16px calc(9px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--header-bg);backdrop-filter:blur(16px)}
+  .bottom-search-bar .product-search-input{max-width:720px;margin:auto}
+  .storefront{padding-bottom:62px}
+  .desktop-theme-toggle{display:none!important}
+  .mobile-theme-toggle{display:flex;align-items:center;gap:11px;padding:13px 0;border:0;border-top:1px solid var(--line);background:transparent;color:var(--text);font-size:9px;font-weight:600;letter-spacing:.1em;text-align:left;cursor:pointer}
+  .mobile-theme-toggle svg{width:20px;height:20px}
+}

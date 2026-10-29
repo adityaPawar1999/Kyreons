@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import SouthEastIcon from '@mui/icons-material/SouthEast';
 import ProductGrid from '../../components/product/ProductGrid.jsx';
 import { products } from '../../utils/store.js';
 import CampaignCards from './CampaignCards.jsx';
@@ -15,7 +17,7 @@ function Newsletter() {
 
   function handleSubmit(event) {
     event.preventDefault();
-    setMessage('Youâ€™re on the list. Keep an eye on your inbox.');
+    setMessage('You’re on the list. Keep an eye on your inbox.');
     event.currentTarget.reset();
   }
 
@@ -43,12 +45,8 @@ function Newsletter() {
   );
 }
 
-const filters = [
-  ['all', 'ALL PIECES'],
-  ['t-shirts', 'T-SHIRTS'],
-  ['oversized', 'OVERSIZED'],
-  ['handcrafted', 'HANDCRAFTED'],
-];
+const normalizeSearchText = (value) => String(value ?? '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+const garmentSearchTerms = new Set(['shirt', 'shirts', 'tshirt', 'tshirts', 'tee', 'tees', 't', 'the']);
 
 function HeroCopy({ slide, className, darkText = false, compact = false }) {
   const mainText = darkText ? 'text-neutral-900' : 'text-white';
@@ -180,7 +178,7 @@ function HeroSlideView({ slide, active }) {
         className="absolute left-[7%] right-[5%] top-[51%] max-w-[600px] -translate-y-1/2 md:left-[9.3%] md:right-auto md:top-1/2"
       />
       <span className="absolute right-3 top-1/2 hidden -translate-y-1/2 [writing-mode:vertical-rl] text-[8px] tracking-[.2em] text-white/75 md:block">
-        SEOUL Â· TOKYO Â· EVERYWHERE
+        SEOUL · TOKYO · EVERYWHERE
       </span>
     </div>
   );
@@ -192,10 +190,11 @@ export default function HomePage({
   initialFilter = 'all',
   wishlist,
   onToggleWishlist,
+  searchQuery,
+  onSearchQueryChange,
+  onSearchFocus,
 }) {
   const [filter, setFilter] = useState(initialFilter);
-  const [sort, setSort] = useState('featured');
-  const [showMore, setShowMore] = useState(false);
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
   const [heroSlideDirection, setHeroSlideDirection] = useState(1);
 
@@ -215,16 +214,40 @@ export default function HomePage({
         product.category === filter || product.tags.includes(filter)
       ));
 
-    if (sort === 'price-low') {
-      nextProducts = nextProducts.sort((a, b) => a.price - b.price);
+    const queryTerms = normalizeSearchText(searchQuery).split(/\s+/).filter(Boolean);
+    const searchTerms = queryTerms.filter((term) => !garmentSearchTerms.has(term));
+    if (searchTerms.length) {
+      nextProducts = nextProducts.filter((product) => {
+        const searchableText = normalizeSearchText([
+          product.id,
+          product.name,
+          product.category,
+          ...(product.tags || []),
+          product.description,
+          ...(product.details || []),
+          ...(product.colors || []).map((color) => color.name),
+          ...(product.colorComposition || []).map((color) => color.color),
+        ].join(' '));
+        return searchTerms.every((term) => searchableText.includes(term));
+      });
     }
 
-    if (sort === 'price-high') {
-      nextProducts = nextProducts.sort((a, b) => b.price - a.price);
+    const colorWords = new Set(products.flatMap((product) => (product.colorComposition || [])
+      .flatMap((entry) => normalizeSearchText(entry.color).split(' '))));
+    const searchedColors = searchTerms.filter((term) => colorWords.has(term));
+    if (searchedColors.length) {
+      const colorScore = (product) => (product.colorComposition || []).reduce((total, entry) => {
+        const entryWords = normalizeSearchText(entry.color).split(' ');
+        return total + (entryWords.some((word) => searchedColors.includes(word)) ? Number(entry.percentage) || 0 : 0);
+      }, 0);
+      nextProducts = nextProducts
+        .map((product, index) => ({ product, index, score: colorScore(product) }))
+        .sort((a, b) => b.score - a.score || a.index - b.index)
+        .map(({ product }) => product);
     }
 
     return nextProducts;
-  }, [filter, sort]);
+  }, [filter, searchQuery]);
 
   useEffect(() => {
     function handleCampaignFilter(event) {
@@ -232,7 +255,6 @@ export default function HomePage({
       if (!campaignLink) return;
 
       event.preventDefault();
-      setShowMore(false);
       setFilter(campaignLink.dataset.campaignFilter);
       document.querySelector('#shop')?.scrollIntoView({ behavior: 'smooth' });
     }
@@ -241,17 +263,7 @@ export default function HomePage({
     return () => document.removeEventListener('click', handleCampaignFilter);
   }, []);
 
-  const shownProducts = showMore ? visibleProducts : visibleProducts.slice(0, 6);
-
-  function updateFilter(value) {
-    setShowMore(false);
-    setFilter(value);
-  }
-
-  function updateSort(value) {
-    setShowMore(false);
-    setSort(value);
-  }
+  const shownProducts = visibleProducts.slice(0, 5);
 
   function selectHeroSlide(nextIndex) {
     const forwardDistance = (nextIndex - activeHeroSlide + heroSlides.length) % heroSlides.length;
@@ -323,13 +335,13 @@ export default function HomePage({
       <section className="flex h-[46px] items-center overflow-hidden bg-acid text-ink md:h-[57px]" aria-label="Kyreons collection statement">
         <div className="flex min-w-max animate-[marquee_32s_linear_infinite] items-center justify-around gap-6 font-display text-[9px] font-semibold tracking-[.13em] md:gap-10 md:text-[11px]">
           <span>MAKE ROOM TO BE YOURSELF</span>
-          <i className="text-base not-italic">âœ³</i>
+          <AutoAwesomeIcon className="ticker-sparkle" aria-hidden="true" />
           <span>OFF DUTY, ON YOUR TERMS</span>
-          <i className="text-base not-italic">âœ³</i>
+          <AutoAwesomeIcon className="ticker-sparkle" aria-hidden="true" />
           <span>MAKE ROOM TO BE YOURSELF</span>
-          <i className="text-base not-italic">âœ³</i>
+          <AutoAwesomeIcon className="ticker-sparkle" aria-hidden="true" />
           <span>OFF DUTY, ON YOUR TERMS</span>
-          <i className="text-base not-italic">âœ³</i>
+          <AutoAwesomeIcon className="ticker-sparkle" aria-hidden="true" />
         </div>
       </section>
 
@@ -338,43 +350,15 @@ export default function HomePage({
         <div className="flex items-end justify-between gap-5">
           <div>
             <p className="flex items-center gap-2 text-[9px] font-semibold tracking-[.17em] text-neutral-500">
-              <span className="text-lime-600">âœ³</span> THE KYREONS UNIFORM
+              <AutoAwesomeIcon className="text-lime-600" fontSize="small" aria-hidden="true" /> THE KYREONS UNIFORM
             </p>
             <h2 className="mt-3 font-display text-[clamp(37px,5.6vw,70px)] font-medium leading-none tracking-[-.07em] text-neutral-900 dark:text-white">
               Pieces with <span className="text-[#9ca87c] dark:text-acid">presence.</span>
             </h2>
           </div>
           <span className="hidden text-right text-[8px] font-medium tracking-[.12em] text-neutral-500 sm:block">
-            DESIGNED TO BE WORN YOUR WAY&nbsp; â†˜
+            DESIGNED TO BE WORN YOUR WAY&nbsp; <SouthEastIcon fontSize="small" aria-hidden="true" />
           </span>
-        </div>
-
-        <div className="mb-5 mt-8 flex flex-col items-start justify-between gap-4 border-b border-neutral-200 pb-3 dark:border-neutral-700 sm:flex-row sm:items-center">
-          <div className="flex w-full items-center gap-5 overflow-x-auto sm:w-auto">
-            {filters.map(([value, label]) => (
-              <button
-                key={value}
-                className={`shrink-0 border-b py-1 text-[9px] font-semibold tracking-[.08em] transition-colors ${filter === value ? 'border-current text-neutral-900 dark:text-white' : 'border-transparent text-neutral-500 hover:text-neutral-900 dark:hover:text-white'}`}
-                onClick={() => updateFilter(value)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
-          <label className="relative flex shrink-0 items-center gap-2 text-[8px] tracking-[.08em] text-neutral-500" htmlFor="sort-select">
-            SORT BY
-            <select
-              className="cursor-pointer bg-transparent py-1 text-[8px] tracking-[.08em] text-neutral-900 outline-none dark:text-white"
-              id="sort-select"
-              value={sort}
-              onChange={(event) => updateSort(event.target.value)}
-            >
-              <option value="featured">FEATURED</option>
-              <option value="price-low">PRICE: LOW TO HIGH</option>
-              <option value="price-high">PRICE: HIGH TO LOW</option>
-            </select>
-          </label>
         </div>
 
         <ProductGrid
@@ -383,19 +367,15 @@ export default function HomePage({
           onOpen={onOpen}
           wishlist={wishlist}
           onToggleWishlist={onToggleWishlist}
-          featured={filter === 'all' && sort === 'featured'}
+          featured={!searchQuery.trim() && filter === 'all'}
         />
 
-        {visibleProducts.length > 6 && (
+        {visibleProducts.length > 5 && (
           <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-neutral-200 pt-5 text-[8px] font-semibold tracking-[.12em] text-neutral-500 dark:border-neutral-700">
-            <span>
-              {showMore
-                ? 'THE FULL KYREONS EDIT'
-                : `SHOWING 06 OF ${String(visibleProducts.length).padStart(2, '0')} PIECES`}
-            </span>
-            <button className="inline-flex items-center gap-2 border-b border-current pb-1 text-neutral-900 dark:text-white" onClick={() => setShowMore((value) => !value)}>
-              {showMore ? 'SHOW LESS' : 'SEE MORE'} <ArrowOutwardIcon />
-            </button>
+            <span>{`SHOWING 05 OF ${String(visibleProducts.length).padStart(2, '0')} PIECES`}</span>
+            <a className="inline-flex items-center gap-2 border-b border-current pb-1 text-neutral-900 dark:text-white" href="#shop-all">
+              SEE MORE <ArrowOutwardIcon />
+            </a>
             <span>TAKE YOUR TIME. FIND YOUR FIT.</span>
           </div>
         )}
@@ -410,11 +390,11 @@ export default function HomePage({
             loading="lazy"
             alt="Layered streetwear look with confident styling"
           />
-          <span className="absolute bottom-4 left-4 text-[8px] font-semibold tracking-[.15em] text-white">STYLING NOTES â€” 001</span>
+          <span className="absolute bottom-4 left-4 text-[8px] font-semibold tracking-[.15em] text-white">STYLING NOTES — 001</span>
         </div>
         <div className="relative flex min-h-[430px] flex-col items-start justify-center px-[8%] py-12 md:px-[7%] lg:px-[10%]">
           <p className="flex items-center gap-2 text-[9px] font-semibold tracking-[.17em] text-neutral-500">
-            <span className="text-lime-600">âœ³</span> MORE ROOM. MORE YOU.
+            <AutoAwesomeIcon className="text-lime-600" fontSize="small" aria-hidden="true" /> MORE ROOM. MORE YOU.
           </p>
           <h2 className="my-6 font-display text-[clamp(59px,7vw,92px)] font-medium leading-[.88] tracking-[-.085em] text-neutral-900 dark:text-white">
             Good clothes<br />
@@ -429,7 +409,7 @@ export default function HomePage({
             FIND YOUR FIT <ArrowOutwardIcon />
           </a>
           <div className="mt-10 text-[8px] font-medium tracking-[.12em] text-neutral-500">
-            01 â€” CLOTHES FOR YOUR OWN KIND OF DAY.
+            01 — CLOTHES FOR YOUR OWN KIND OF DAY.
           </div>
         </div>
       </section>
@@ -453,14 +433,14 @@ export default function HomePage({
         <a href="#our-story" className="mt-5 inline-flex items-center justify-between gap-8 bg-paper px-4 py-4 text-[9px] font-bold tracking-[.12em] !text-[#191b17] transition-colors hover:bg-acid hover:!text-[#191b17]">
           READ OUR STORY <ArrowOutwardIcon />
         </a>
-        <span className="absolute right-[7%] top-[72%] grid h-20 w-20 place-items-center rounded-full border border-white/50 text-center font-display text-sm leading-none md:right-[9%] md:top-1/2 md:h-36 md:w-36 md:-translate-y-1/2 md:text-2xl">KYR<br />Ã†ONS</span>
+        <span className="absolute right-[7%] top-[72%] grid h-20 w-20 place-items-center rounded-full border border-white/50 text-center font-display text-sm leading-none md:right-[9%] md:top-1/2 md:h-36 md:w-36 md:-translate-y-1/2 md:text-2xl">KYR<br />EONS</span>
       </section>
 
       {/* Newsletter signup section */}
       <section className="grid grid-cols-1 items-center gap-6 border-b border-neutral-200 px-[7%] py-16 dark:border-neutral-700 md:grid-cols-[1fr_.8fr] md:gap-14 md:px-[9.3%] md:py-[90px]">
         <div>
           <p className="flex items-center gap-2 text-[9px] font-semibold tracking-[.17em] text-neutral-500">
-            <span className="text-lime-600">âœ³</span> LETTERS FROM THE IN-BETWEEN
+            <AutoAwesomeIcon className="text-lime-600" fontSize="small" aria-hidden="true" /> LETTERS FROM THE IN-BETWEEN
           </p>
           <h2 className="mt-3 font-display text-[42px] font-medium leading-none tracking-[-.07em] text-neutral-900 dark:text-white md:text-[clamp(35px,5vw,60px)]">
             Good things, <span className="text-[#9ca87c] dark:text-acid">occasionally.</span>
