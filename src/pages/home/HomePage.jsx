@@ -74,9 +74,9 @@ function HeroCopy({ slide, className, darkText = false, compact = false }) {
       </p>
       <a
         className={`mt-6 inline-flex items-center justify-between font-bold transition-colors ${buttonSize} ${darkText ? 'bg-neutral-900 !text-white hover:bg-neutral-700' : 'bg-paper !text-[#191b17] hover:bg-acid hover:!text-[#191b17]'}`}
-        href="#shop"
+        href={slide.href}
       >
-        SHOP THE COLLECTION <ArrowOutwardIcon />
+        {slide.ctaLabel} <ArrowOutwardIcon />
       </a>
     </div>
   );
@@ -121,8 +121,8 @@ function DesktopHeroSlideView({ slide, active }) {
           <p className="mt-5 max-w-[330px] text-xs leading-6 text-neutral-800">
             {slide.description}
           </p>
-          <a className="mt-7 inline-flex items-center gap-3 border-b border-neutral-900 pb-2 text-[9px] font-bold tracking-[.12em] text-neutral-900" href="#shop">
-            SHOP THE COLLECTION <ArrowOutwardIcon />
+          <a className="mt-7 inline-flex items-center gap-3 border-b border-neutral-900 pb-2 text-[9px] font-bold tracking-[.12em] text-neutral-900 transition-opacity hover:opacity-60" href={slide.href}>
+            {slide.ctaLabel} <ArrowOutwardIcon />
           </a>
           <span className="absolute bottom-5 left-[7%] text-[8px] font-semibold tracking-[.16em] text-neutral-700 md:left-[10%]">
             KYREONS / CHAPTER 03
@@ -152,8 +152,8 @@ function DesktopHeroSlideView({ slide, active }) {
           <p className="mt-5 max-w-[330px] text-xs leading-6 text-neutral-300">
             {slide.description}
           </p>
-          <a className="mt-7 inline-flex items-center gap-3 bg-acid px-4 py-4 text-[9px] font-bold tracking-[.12em] text-neutral-900 transition-colors hover:bg-white hover:!text-black" href="#shop">
-            SHOP THE COLLECTION <ArrowOutwardIcon />
+          <a className="mt-7 inline-flex items-center gap-3 bg-acid px-4 py-4 text-[9px] font-bold tracking-[.12em] text-neutral-900 transition-colors hover:bg-white hover:!text-black" href={slide.href}>
+            {slide.ctaLabel} <ArrowOutwardIcon />
           </a>
         </div>
         <div className="grid min-h-[300px] grid-cols-[1.2fr_.8fr] grid-rows-2 gap-1.5 p-1.5 md:min-h-0">
@@ -383,7 +383,7 @@ export default function HomePage({
               <AutoAwesomeIcon className="text-lime-600" fontSize="small" aria-hidden="true" /> THE KYREONS UNIFORM
             </p>
             <h2 className="mt-3 font-display text-[clamp(37px,5.6vw,70px)] font-medium leading-none tracking-[-.07em] text-neutral-900 dark:text-white">
-              Pieces with <span className="text-[#9ca87c] dark:text-acid">presence.</span>
+              Pieces with <span className="text-acid">presence.</span>
             </h2>
           </div>
           <span className="hidden text-right text-[8px] font-medium tracking-[.12em] text-neutral-500 sm:block">
@@ -469,11 +469,11 @@ export default function HomePage({
       {/* Newsletter signup section */}
       <section className="grid grid-cols-1 items-center gap-6 border-b border-neutral-200 px-[7%] py-16 dark:border-neutral-700 md:grid-cols-[1fr_.8fr] md:gap-14 md:px-[9.3%] md:py-[90px]">
         <div>
-          <p className="flex items-center gap-2 text-[9px] font-semibold tracking-[.17em] text-neutral-500">
-            <AutoAwesomeIcon className="text-lime-600" fontSize="small" aria-hidden="true" /> LETTERS FROM THE IN-BETWEEN
+          <p className="flex items-center gap-2 text-[9px] font-semibold tracking-[.17em] text-neutral-600 dark:text-neutral-300">
+            <AutoAwesomeIcon className="text-acid" fontSize="small" aria-hidden="true" /> LETTERS FROM THE IN-BETWEEN
           </p>
           <h2 className="mt-3 font-display text-[42px] font-medium leading-none tracking-[-.07em] text-neutral-900 dark:text-white md:text-[clamp(35px,5vw,60px)]">
-            Good things, <span className="text-[#9ca87c] dark:text-acid">occasionally.</span>
+            Good things, <span className="text-acid">occasionally.</span>
           </h2>
           <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">First looks, new chapters and the odd note worth opening.</p>
         </div>

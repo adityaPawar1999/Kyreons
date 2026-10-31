@@ -79,7 +79,7 @@ export default function useStorefront() {
         ? current.map((item) => item.key === key ? { ...item, quantity: item.quantity + 1 } : item)
         : [...current, { id: product.id, size: itemSize, color: itemColor, key, quantity: 1 }];
     });
-    setToast(`${product.name} added to your bag.`);
+    setToast('Item added to cart');
     window.setTimeout(() => setToast(''), 2400);
   };
   const addToBag = (product, size, color) => {
