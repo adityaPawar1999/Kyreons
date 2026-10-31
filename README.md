@@ -28,5 +28,6 @@ Pages are in `src/pages/`; reusable navigation, product, cart, layout, and butto
 - Browse, filter, and sort products.
 - Open a product page, select one of its four photos, color, and size, then add it to the bag.
 - Change quantities in the bag. Cart and theme preferences persist in browser storage.
-- The newsletter form displays a demo confirmation. It is not connected to an email service.
-- Checkout displays a prompt to connect a payment provider before taking orders.
+- Newsletter signup posts `{ "email": "..." }` to `VITE_NEWSLETTER_ENDPOINT`. Configure this browser-accessible endpoint in the deployment environment; it must allow requests from the storefront origin and return a 2xx response on success. See `.env.example`.
+- Shipping and customer policies are linked from the footer. The storefront currently supports delivery addresses in India only.
+- Checkout is a demo: form submission displays an invoice preview but does not accept payment or create an order.

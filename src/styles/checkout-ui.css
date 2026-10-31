@@ -1,0 +1,22 @@
+.checkout-order-summary>ul>li{align-items:flex-start}
+.checkout-order-summary>ul>li>div:nth-child(2){padding-top:2px}
+.checkout-order-summary>ul>li>div:nth-child(2)>h3{line-height:1.4}
+.checkout-order-summary>ul>li>div:nth-child(2)>label{margin-top:12px}
+.checkout-order-summary>ul>li>div:nth-child(2)>div{margin-top:12px;justify-content:space-between}
+.checkout-order-summary>ul>li>div:nth-child(2)>div>span{font-variant-numeric:tabular-nums}
+.checkout-order-summary>ul>li>div:first-child{overflow:hidden}
+.checkout-order-summary>ul>li>div:first-child img{transition:transform .3s ease}
+.checkout-order-summary>ul>li:hover>div:first-child img{transform:scale(1.03)}
+.checkout-order-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px;align-items:center}
+.checkout-order-controls>label{height:36px;justify-content:space-between;padding:0 8px;border:1px solid #d4d4d4;letter-spacing:.06em}
+.dark .checkout-order-controls>label{border-color:#404040}
+.checkout-order-controls .checkout-size-select{height:26px;max-width:58%;padding:2px 18px 2px 5px;border:0;outline:0;box-shadow:none}
+.checkout-order-controls .checkout-quantity-control{height:36px;width:100%;justify-content:space-between}
+.checkout-order-controls .checkout-quantity-control button{height:34px;width:30px}
+.checkout-remove-item{display:grid;flex:none;width:28px;height:28px;place-items:center;padding:0;border:0;border-radius:50%;background:transparent;color:#c2413b;cursor:pointer;transition:background .2s ease,color .2s ease}
+.checkout-remove-item svg{font-size:18px}
+.checkout-remove-item:hover{background:rgba(194,65,59,.1);color:#a92f29}
+.checkout-invoice{width:100%;box-shadow:0 18px 55px rgba(0,0,0,.07)}
+.checkout-invoice-overlay{position:fixed;z-index:120;inset:0;display:grid;place-items:center;padding:20px;background:rgba(15,16,14,.58);backdrop-filter:blur(5px)}
+.checkout-invoice{max-width:680px;max-height:calc(100vh - 40px);overflow:auto}
+@media(max-width:480px){.checkout-order-summary>ul>li{gap:12px}.checkout-order-summary>ul>li>div:first-child{width:62px;height:84px;flex-basis:62px}.checkout-order-summary>ul>li>div:nth-child(2)>div{gap:8px}}

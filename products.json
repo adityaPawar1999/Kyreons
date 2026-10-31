@@ -198,7 +198,7 @@
   "name": "Olive Disorder Graphic T-Shirt",
   "category": "t-shirts",
   "tags": [
-    "regular-fit",
+    "oversized",
     "graphic-tee",
     "abstract-art",
     "olive-green",
@@ -213,7 +213,7 @@
   "price": 1299,
   "description": "Break away from the ordinary with the KYREONS Olive Disorder Graphic T-Shirt. Featuring an expressive olive-green abstract graphic inspired by organic shapes, playful symbols, and artistic linework, this design brings a distinctive creative edge to a clean ivory base. The front showcases a bold statement graphic with the word 'DIS-ORDER', creating a balance between unconventional art and minimalist streetwear. Finished with a classic crew neckline, short sleeves, clean hem stitching, and the signature KYREONS collar label, this versatile T-shirt is designed for those who appreciate individuality, contemporary Korean fashion, and understated artistic expression. Never just ordinary.",
   "details": [
-    "Classic regular-fit silhouette",
+    "Relaxed oversized silhouette",
     "Soft ivory or off-white base colour",
     "Bold olive-green abstract graphic on the front",
     "Artistic linework inspired by organic shapes and playful symbols",
@@ -349,7 +349,7 @@
   "name": "Minimal Teal Mountain Graphic T-Shirt",
   "category": "t-shirts",
   "tags": [
-    "regular-fit",
+    "oversized",
     "graphic-tee",
     "botanical",
     "nature-inspired",
@@ -363,7 +363,7 @@
   "price": 1299,
   "description": "Bring nature-inspired artistry into your everyday wardrobe with the KYREONS Green Botanical Graphic Tee. Featuring a rich forest-green botanical graphic against a clean ivory base, this T-shirt combines organic textures with contemporary Korean streetwear aesthetics. The front showcases a compact botanical design on the chest, while the back features a larger version of the same striking graphic for a coordinated, statement-making look. Finished with a classic crew neckline, short sleeves, and signature KYREONS branding, this versatile piece delivers a balance of minimalism, creativity, and modern style. Never just ordinary.",
   "details": [
-    "Classic regular-fit silhouette",
+    "Relaxed oversized silhouette",
     "Ivory or off-white base colour",
     "Small green botanical graphic on the front chest",
     "Large matching botanical graphic on the back",
@@ -393,6 +393,232 @@
     "/green-botanical-tee-graphic/GBTG2.jpeg",
     "/green-botanical-tee-graphic/GBTG3.jpeg",
     "/green-botanical-tee-graphic/GBTG4.jpeg"
+  ]
+},
+{
+  "id": "kyreons-young-life-tee",
+  "name": "Kyreons Young Life Oversized Tee",
+  "category": "t-shirts",
+  "tags": [
+    "oversized",
+    "korean-streetwear",
+    "asian-streetwear",
+    "graphic-tee",
+    "floral-graphic",
+    "typography",
+    "sky-blue",
+    "modern-streetwear",
+    "relaxed-fit",
+    "new-arrival"
+  ],
+  "badge": "YOUTH IN BLOOM",
+  "price": 1199,
+  "description": "Bring youthful energy to your everyday style with the KYREONS Young Life Tee. Designed in a refreshing sky-blue shade, this oversized T-shirt features a playful floral graphic with bold cream typography and warm yellow accents. The front showcases a compact chest print, while the back makes a statement with an oversized floral composition and expressive typography. Combining contemporary Korean-inspired streetwear with a fresh botanical aesthetic, this piece is designed for those who believe in expressing individuality through style. Never just ordinary.",
+  "details": [
+    "Oversized fit with a relaxed, contemporary silhouette",
+    "Refreshing sky-blue base color",
+    "Small floral typography graphic on the front chest",
+    "Large floral artwork with YOUNG LIFE typography on the back",
+    "Cream and mustard-yellow graphic accents",
+    "Soft, comfortable cotton fabric",
+    "Classic ribbed crew neckline",
+    "Dropped shoulder design with wide short sleeves",
+    "Black KYREONS signature collar label",
+    "Suitable for everyday wear and modern streetwear styling"
+  ],
+  "material": "Cotton — confirm fabric composition with supplier",
+  "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL"
+  ],
+  "colors": [
+    {
+      "name": "Sky Blue",
+      "hex": "#69B5CE"
+    }
+  ],
+  "images": [
+    "/young-life-tee/YLT1.jpeg",
+    "/young-life-tee/YLT2.jpeg",
+    "/young-life-tee/YLT3.jpeg",
+    "/young-life-tee/YLT4.jpeg"
+  ]
+},
+{
+  "id": "kyreons-birdengardening-tee",
+  "name": "Kyreons Botanical Garden Oversized Tee",
+  "category": "t-shirts",
+  "tags": [
+    "oversized",
+    "botanical",
+    "nature-inspired",
+    "floral-graphic",
+    "asian-streetwear",
+    "minimalist",
+    "cream-t-shirt",
+    "graphic-tee",
+    "modern-streetwear",
+    "relaxed-fit",
+    "new-arrival"
+  ],
+  "badge": "NATURE IN MOTION",
+  "price": 1299,
+  "description": "Bring nature into your everyday wardrobe with the KYREONS Botanical Garden Tee. Designed in a soft ivory shade, this oversized T-shirt features an artistic botanical composition inspired by vintage flower illustrations. The back showcases a striking 3×3 floral grid in deep forest green, complemented by botanical typography and carefully arranged descriptive text. The front maintains a minimal aesthetic with a compact floral graphic on the chest. Combining contemporary streetwear with nature-inspired artwork, this piece creates a distinctive balance between simplicity and artistic expression. Never just ordinary.",
+  "details": [
+    "Oversized fit with a relaxed, contemporary silhouette",
+    "Premium-looking ivory/cream base color",
+    "Large 3×3 botanical floral grid on the back",
+    "Nine unique floral illustrations in cream and forest green",
+    "Birdengardening typography beneath the back artwork",
+    "Additional botanical-inspired descriptive text on the back",
+    "Minimal floral graphic placement on the front chest",
+    "Classic ribbed crew neckline",
+    "Dropped shoulders with relaxed wide sleeves",
+    "Black KYREONS signature collar label",
+    "Clean sleeve and bottom hem stitching",
+    "Designed for everyday wear and modern streetwear styling"
+  ],
+  "material": "Cotton — confirm fabric composition with supplier",
+  "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL"
+  ],
+  "colors": [
+    {
+      "name": "Ivory Botanical",
+      "hex": "#F3EFE4"
+    }
+  ],
+  "images": [
+    "/botanical-garden-tee/BGT1.jpeg",
+    "/botanical-garden-tee/BGT2.jpeg",
+    "/botanical-garden-tee/BGT3.jpeg",
+    "/botanical-garden-tee/BGT4.jpeg"
+  ]
+},
+{
+  "id": "kyreons-japanese-landscape-tee",
+  "name": "Kyreons Japanese Landscape Oversized Tee",
+  "category": "t-shirts",
+  "tags": [
+    "oversized",
+    "japanese-art",
+    "ukiyo-e",
+    "nature-inspired",
+    "landscape-graphic",
+    "asian-streetwear",
+    "vintage-art",
+    "black-t-shirt",
+    "graphic-tee",
+    "modern-streetwear",
+    "relaxed-fit",
+    "new-arrival"
+  ],
+  "badge": "CULTURE IN MOTION",
+  "price": 1299,
+  "description": "Explore the beauty of traditional Japanese landscapes with the KYREONS Japanese Landscape Oversized Tee. Designed in classic black, this oversized T-shirt blends vintage Japanese art with contemporary streetwear aesthetics. The back features a striking 3×3 collage of illustrated landscapes inspired by traditional ukiyo-e artwork, showcasing mountains, red suns, forests, clouds, pagodas and autumn scenery in rich shades of teal, orange, cream and red. The artwork is complemented by KYREONS signature typography and the phrase 'Different Places, Same Sky, A Calmer Version of Me.' The front maintains a minimal aesthetic with a vertical Japanese landscape illustration on the chest, followed by KYREONS branding and the tagline 'Never Just Ordinary.' A statement piece for those who appreciate art, culture and modern streetwear.",
+  "details": [
+    "Oversized fit with a relaxed, contemporary silhouette",
+    "Classic deep black base color",
+    "Large 3×3 Japanese landscape collage on the back",
+    "Vintage ukiyo-e inspired illustrations",
+    "Nine unique landscape artwork panels",
+    "Mountains, red suns, forests, clouds and pagoda illustrations",
+    "Rich teal, orange, cream and red color palette",
+    "KYREONS signature typography beneath the back artwork",
+    "Different Places, Same Sky, A Calmer Version of Me tagline",
+    "Minimal vertical Japanese landscape graphic on the front chest",
+    "Never Just Ordinary signature branding",
+    "Classic ribbed crew neckline",
+    "Dropped shoulders with relaxed wide sleeves",
+    "Black KYREONS signature collar label",
+    "Clean sleeve and bottom hem stitching",
+    "Designed for everyday wear and modern Asian streetwear styling"
+  ],
+  "material": "Cotton — confirm fabric composition with supplier",
+  "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL"
+  ],
+  "colors": [
+    {
+      "name": "Midnight Black",
+      "hex": "#171717"
+    }
+  ],
+  "images": [
+    "/japanese-landscape-tee/JLT1.jpeg",
+    "/japanese-landscape-tee/JLT2.jpeg",
+    "/japanese-landscape-tee/JLT3.jpeg",
+    "/japanese-landscape-tee/JLT4.jpeg"
+  ]
+},
+{
+  "id": "kyreons-young-life-on-tee",
+  "name": "Kyreons Young Life On Oversized Tee",
+  "category": "t-shirts",
+  "tags": [
+    "oversized",
+    "floral-graphic",
+    "young-life-on",
+    "flower-art",
+    "youth-inspired",
+    "asian-streetwear",
+    "minimalist",
+    "red-t-shirt",
+    "graphic-tee",
+    "modern-streetwear",
+    "relaxed-fit",
+    "new-arrival"
+  ],
+  "badge": "YOUTH IN MOTION",
+  "price": 1299,
+  "description": "Celebrate youthful energy and creative expression with the KYREONS Young Life On Oversized Tee. Designed in a bold deep red shade, this oversized T-shirt combines playful floral artwork with contemporary streetwear aesthetics. The back features a large cream-colored five-petal flower graphic paired with bold rounded typography reading 'YOUNG LIFE ON', with 'ON' highlighted in vibrant yellow. The design is completed with KYREONS signature branding and the tagline 'Never Just Ordinary.' The front keeps things minimal with a smaller flower graphic and matching Young Life On typography on the chest. A statement piece designed for those who embrace individuality, positivity and everyday creativity.",
+  "details": [
+    "Oversized fit with a relaxed, contemporary silhouette",
+    "Bold deep red base color",
+    "Large floral graphic on the back",
+    "Five-petal cream flower illustration with a red center",
+    "Bold rounded YOUNG LIFE ON typography",
+    "Yellow accent highlighting the word ON",
+    "KYREONS signature branding beneath the back artwork",
+    "Never Just Ordinary signature tagline",
+    "Minimal flower graphic placement on the front chest",
+    "Matching YOUNG LIFE ON typography on the front",
+    "Classic ribbed crew neckline",
+    "Dropped shoulders with relaxed wide sleeves",
+    "Black KYREONS signature collar label",
+    "Clean sleeve and bottom hem stitching",
+    "Designed for everyday wear and modern streetwear styling"
+  ],
+  "material": "Cotton — confirm fabric composition with supplier",
+  "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL"
+  ],
+  "colors": [
+    {
+      "name": "Crimson Red",
+      "hex": "#A8101C"
+    }
+  ],
+  "images": [
+    "/young-life-on-tee/YLT1.jpeg",
+    "/young-life-on-tee/YLT2.jpeg",
+    "/young-life-on-tee/YLT3.jpeg",
+    "/young-life-on-tee/YLT4.jpeg"
   ]
 }
 ]

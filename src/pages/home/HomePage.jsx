@@ -14,37 +14,48 @@ const heroSlides = [heroSlideOne, heroSlideTwo, heroSlideThree, heroSlideFour];
 
 function Newsletter() {
   const [message, setMessage] = useState('');
+  const [status, setStatus] = useState('idle');
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    setMessage('Youâ€™re on the list. Keep an eye on your inbox.');
-    event.currentTarget.reset();
+    const endpoint = import.meta.env.VITE_NEWSLETTER_ENDPOINT;
+    if (!endpoint) {
+      setStatus('error');
+      setMessage('Newsletter signup is not connected yet. Please check back soon.');
+      return;
+    }
+
+    const form = event.currentTarget;
+    const email = new FormData(form).get('email');
+    setStatus('loading');
+    setMessage('');
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (!response.ok) throw new Error('Newsletter request failed');
+      setStatus('success');
+      setMessage('Thanks for signing up. Keep an eye on your inbox.');
+      form.reset();
+    } catch {
+      setStatus('error');
+      setMessage('We could not add you right now. Please try again shortly.');
+    }
   }
 
   return (
     <form className="grid gap-3 sm:grid-cols-[1fr_auto]" onSubmit={handleSubmit}>
-      <label className="sr-only" htmlFor="newsletter-email">
-        Your email address
-      </label>
-      <input
-        id="newsletter-email"
-        type="email"
-        className="min-w-0 border border-neutral-300 bg-transparent px-4 py-3 text-sm text-neutral-900 outline-none placeholder:text-neutral-500 focus:border-neutral-900 dark:border-neutral-600 dark:text-white dark:focus:border-white"
-        placeholder="Your email address"
-        required
-      />
-      <button className="inline-flex items-center justify-center gap-3 bg-neutral-900 px-5 py-3 text-[9px] font-bold tracking-[.12em] text-white transition-colors hover:bg-lime-300 hover:text-neutral-900 dark:bg-lime-300 dark:text-neutral-900" type="submit">
-        COUNT ME IN <ArrowOutwardIcon />
+      <label className="sr-only" htmlFor="newsletter-email">Your email address</label>
+      <input id="newsletter-email" name="email" type="email" className="min-w-0 border border-neutral-300 bg-transparent px-4 py-3 text-sm text-neutral-900 outline-none placeholder:text-neutral-500 focus:border-neutral-900 dark:border-neutral-600 dark:text-white dark:focus:border-white" placeholder="Your email address" required />
+      <button className="inline-flex items-center justify-center gap-3 bg-neutral-900 px-5 py-3 text-[9px] font-bold tracking-[.12em] text-white transition-colors hover:bg-lime-300 hover:text-neutral-900 disabled:cursor-wait disabled:opacity-60 dark:bg-lime-300 dark:text-neutral-900" type="submit" disabled={status === 'loading'}>
+        {status === 'loading' ? 'ADDING YOU…' : 'COUNT ME IN'} <ArrowOutwardIcon />
       </button>
-      {message && (
-        <p className="text-xs text-neutral-600 dark:text-neutral-300 sm:col-span-2" role="status">
-          {message}
-        </p>
-      )}
+      {message && <p className={`text-xs ${status === 'error' ? 'text-red-700 dark:text-red-300' : 'text-neutral-600 dark:text-neutral-300'} sm:col-span-2`} role="status" aria-live="polite">{message}</p>}
     </form>
   );
 }
-
 const normalizeSearchText = (value) => String(value ?? '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 const garmentSearchTerms = new Set(['shirt', 'shirts', 'tshirt', 'tshirts', 'tee', 'tees', 't', 'the']);
 

@@ -12,6 +12,9 @@ import './styles/reviews.css';
 import './styles/footer.css';
 import './styles/contact.css';
 import './styles/spotlight-gallery.css';
+import './styles/cart-ui.css';
+import './styles/checkout-ui.css';
+import './styles/policy-ui.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
