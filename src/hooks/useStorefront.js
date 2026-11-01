@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import useStoredCart from './useStoredCart.js';
 import { products } from '../utils/store.js';
+import { normalizeCart } from '../utils/cart.js';
+import { getCustomerCart, getCustomerWishlist, getSignedInAccount, saveCustomerCart, toggleCustomerWishlist, watchAuthUser } from '../services/firebase.js';
 
 const THEME_KEY = 'kyreons-theme-v1';
 
@@ -11,18 +13,86 @@ function getRouteFromHash() {
 
 export default function useStorefront() {
   const [cart, setCart] = useStoredCart();
-  const [wishlist, setWishlist] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('kyreons-wishlist-v1') || '[]'); } catch { return []; }
-  });
+  const [wishlist, setWishlist] = useState([]);
+  const [accountUser, setAccountUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
+  const [cartReadyFor, setCartReadyFor] = useState(null);
   const [dark, setDark] = useState(() => localStorage.getItem(THEME_KEY) === 'dark');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [route, setRoute] = useState(getRouteFromHash);
   const [toast, setToast] = useState('');
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  useEffect(() => { localStorage.setItem('kyreons-wishlist-v1', JSON.stringify(wishlist)); }, [wishlist]);
   const productRoute = route.startsWith('product/') ? route.split('/')[1] : null;
   const currentProduct = products.find((product) => product.id === productRoute);
+
+  useEffect(() => {
+    let active = true;
+    try {
+      const unsubscribe = watchAuthUser((user) => {
+        if (active) {
+          setAccountUser(user);
+          setAuthReady(true);
+        }
+      });
+      return () => { active = false; unsubscribe(); };
+    } catch {
+      setAuthReady(true);
+      setAccountUser(null);
+      setWishlist([]);
+      return () => { active = false; };
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!authReady) return undefined;
+    if (!accountUser || accountUser.isAnonymous) {
+      setCartReadyFor(null);
+      return undefined;
+    }
+    let active = true;
+    setCartReadyFor(null);
+    getCustomerCart(accountUser.uid, accountUser.email)
+      .then((savedCart) => {
+        if (!active) return;
+        if (savedCart) setCart(normalizeCart(savedCart));
+        setCartReadyFor(accountUser.uid);
+      })
+      .catch((error) => {
+        if (active) {
+          console.error('Could not load customer cart:', error);
+          setCartReadyFor(accountUser.uid);
+        }
+      });
+    return () => { active = false; };
+  }, [accountUser, authReady, setCart]);
+
+  useEffect(() => {
+    if (!accountUser || accountUser.isAnonymous || cartReadyFor !== accountUser.uid) return undefined;
+    let active = true;
+    saveCustomerCart(accountUser.uid, accountUser.email, cart).catch((error) => {
+      if (active) console.error('Could not save customer cart:', error);
+    });
+    return () => { active = false; };
+  }, [accountUser, cart, cartReadyFor]);
+
+  useEffect(() => {
+    if (!authReady) return undefined;
+    if (!accountUser || accountUser.isAnonymous) {
+      setWishlist([]);
+      return undefined;
+    }
+    let active = true;
+    getCustomerWishlist(accountUser.uid, accountUser.email)
+      .then((savedIds) => { if (active) setWishlist(savedIds); })
+      .catch((error) => {
+        if (active) {
+          console.error('Could not load saved products:', error);
+          setWishlist([]);
+        }
+      });
+    return () => { active = false; };
+  }, [accountUser, authReady]);
 
   useEffect(() => {
     const syncRoute = () => setRoute(getRouteFromHash());
@@ -67,7 +137,26 @@ export default function useStorefront() {
   }, [drawerOpen]);
 
   const openProduct = (id) => { location.hash = `product/${id}`; };
-  const toggleWishlist = (id) => setWishlist((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
+  const toggleWishlist = async (id) => {
+    try {
+      const account = await getSignedInAccount();
+      if (!account) {
+        setToast('Log in or sign up to save products');
+        location.hash = 'account/login';
+        return;
+      }
+      const nextWishlist = await toggleCustomerWishlist(account.uid, account.email, id);
+      setWishlist(nextWishlist);
+      setToast(nextWishlist.includes(id) ? 'Added to your saved products' : 'Removed from your saved products');
+      window.setTimeout(() => setToast(''), 2400);
+    } catch (error) {
+      console.error('Could not update saved products:', error);
+      setToast(error?.code === 'permission-denied'
+        ? 'Wishlist access denied. Publish the customerWishlists Firestore rule.'
+        : 'Could not update your saved products. Please try again.');
+      window.setTimeout(() => setToast(''), 2400);
+    }
+  };
   const navigateCategory = (category) => { location.hash = `category/${category}`; };
   const quickAdd = (product, size = null, color = null) => {
     const itemSize = size || product.sizes[1] || product.sizes[0];
@@ -104,6 +193,9 @@ export default function useStorefront() {
   return {
     cart,
     wishlist,
+    accountUser,
+    isSignedIn: authReady && Boolean(accountUser && !accountUser.isAnonymous),
+    authReady,
     setCart,
     cartCount,
     dark,

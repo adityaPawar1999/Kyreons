@@ -9,6 +9,7 @@ import heroSlideOne from './HeroSlideOne.jsx';
 import heroSlideTwo from './HeroSlideTwo.jsx';
 import heroSlideThree from './HeroSlideThree.jsx';
 import heroSlideFour from './HeroSlideFour.jsx';
+import { saveNewsletterEmail } from '../../services/firebase.js';
 
 const heroSlides = [heroSlideOne, heroSlideTwo, heroSlideThree, heroSlideFour];
 
@@ -18,30 +19,24 @@ function Newsletter() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    const endpoint = import.meta.env.VITE_NEWSLETTER_ENDPOINT;
-    if (!endpoint) {
-      setStatus('error');
-      setMessage('Newsletter signup is not connected yet. Please check back soon.');
-      return;
-    }
+
 
     const form = event.currentTarget;
     const email = new FormData(form).get('email');
     setStatus('loading');
     setMessage('');
     try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      if (!response.ok) throw new Error('Newsletter request failed');
+      await saveNewsletterEmail(email);
+
       setStatus('success');
-      setMessage('Thanks for signing up. Keep an eye on your inbox.');
+      setMessage('“Thank you for subscribing! Stay tuned for the latest drops, exclusive updates, and more from KYREONS.”');
       form.reset();
-    } catch {
+    } catch (error) {
+      console.error('Newsletter Firestore write failed:', error);
       setStatus('error');
-      setMessage('We could not add you right now. Please try again shortly.');
+      setMessage(error?.code === 'permission-denied'
+        ? 'Firebase denied this write. Publish the newsletterSubscribers Firestore rule and try again.'
+        : 'We could not save your email: ' + (error?.code || error?.message || 'unknown Firebase error'));
     }
   }
 
@@ -50,7 +45,7 @@ function Newsletter() {
       <label className="sr-only" htmlFor="newsletter-email">Your email address</label>
       <input id="newsletter-email" name="email" type="email" className="min-w-0 border border-neutral-300 bg-transparent px-4 py-3 text-sm text-neutral-900 outline-none placeholder:text-neutral-500 focus:border-neutral-900 dark:border-neutral-600 dark:text-white dark:focus:border-white" placeholder="Your email address" required />
       <button className="inline-flex items-center justify-center gap-3 bg-neutral-900 px-5 py-3 text-[9px] font-bold tracking-[.12em] text-white transition-colors hover:bg-lime-300 hover:text-neutral-900 disabled:cursor-wait disabled:opacity-60 dark:bg-lime-300 dark:text-neutral-900" type="submit" disabled={status === 'loading'}>
-        {status === 'loading' ? 'ADDING YOU�' : 'COUNT ME IN'} <ArrowOutwardIcon />
+        {status === 'loading' ? 'ADDING YOU�' : 'COUNT ME IN'} <ArrowOutwardIcon />
       </button>
       {message && <p className={`text-xs ${status === 'error' ? 'text-red-700 dark:text-red-300' : 'text-neutral-600 dark:text-neutral-300'} sm:col-span-2`} role="status" aria-live="polite">{message}</p>}
     </form>

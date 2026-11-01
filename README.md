@@ -28,6 +28,17 @@ Pages are in `src/pages/`; reusable navigation, product, cart, layout, and butto
 - Browse, filter, and sort products.
 - Open a product page, select one of its four photos, color, and size, then add it to the bag.
 - Change quantities in the bag. Cart and theme preferences persist in browser storage.
-- Newsletter signup posts `{ "email": "..." }` to `VITE_NEWSLETTER_ENDPOINT`. Configure this browser-accessible endpoint in the deployment environment; it must allow requests from the storefront origin and return a 2xx response on success. See `.env.example`.
+- Newsletter signup stores normalized email addresses in Firestore's separate `newsletterSubscribers` collection without requiring sign-in. Subscriber records cannot be read from the storefront. See the Firebase setup below.
 - Shipping and customer policies are linked from the footer. The storefront currently supports delivery addresses in India only.
-- Checkout is a demo: form submission displays an invoice preview but does not accept payment or create an order.
+- Checkout saves an order to Firebase and displays an invoice preview; payment processing is not connected.
+
+## Firebase orders
+
+Order checkout writes customer contact and delivery details, item snapshots, totals, and a `pending_payment` status to the Firestore `orders` collection. The browser signs in anonymously with Firebase Auth and the order is associated with that anonymous user ID. Customers can see their saved orders from **My orders** in the footer, in the same browser profile. Clearing browser data or switching devices loses access to that anonymous identity; add a permanent sign-in flow before offering cross-device order history.
+
+1. Create a Firebase project and register a web app. Copy its web app configuration into a local `.env` using the variable names in `.env.example`.
+2. In Firebase Console, enable **Authentication > Sign-in method > Email/Password** (for customer accounts) and **Anonymous** (for guest order identity), and create a **Cloud Firestore** database.
+3. Publish the rules from `firestore.rules` in the Firestore Rules tab.
+4. Add the same `VITE_FIREBASE_*` variables to your hosting provider and redeploy.
+
+The checkout saves an order but does not process payment. Customer profiles are stored in `customerProfiles/{userId}` and each customer can read or update only their own profile. The Firestore rules scope order reading to the authenticated owner and prevent client updates or deletion. Firebase web config values are public client identifiers; Firestore security rules provide access control.

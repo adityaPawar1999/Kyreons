@@ -6,6 +6,7 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import IconButton from '../buttons/IconButton.jsx';
 import BrandLogo from '../layout/BrandLogo.jsx';
 import ProductSearchInput from '../product/ProductSearchInput.jsx';
@@ -48,7 +49,7 @@ export default function Navbar({ dark, onTheme, onCart, onCategory, onWishlist, 
           <span>{dark ? 'LIGHT THEME' : 'DARK THEME'}</span>
         </button>
       </nav>
-      <div className="nav-actions"><ProductSearchInput className="navbar-search" value={searchQuery} onChange={onSearchQueryChange} onFocus={onSearchFocus} /><IconButton className="desktop-theme-toggle" onClick={onTheme} aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}>{dark ? <LightModeOutlinedIcon /> : <DarkModeOutlinedIcon />}</IconButton><IconButton className={`wishlist-trigger relative ${wishlistCount ? 'text-rose-600' : ''}`} onClick={onWishlist} aria-label={`View liked products, ${wishlistCount} saved`}><FavoriteBorderIcon /><span className={`absolute -right-1 -top-px grid h-[15px] min-w-[15px] place-content-center rounded-full bg-rose-600 px-[3px] text-[9px] font-bold text-white ${wishlistCount ? '' : 'hidden'}`}>{wishlistCount > 99 ? '99+' : wishlistCount}</span></IconButton><IconButton className="cart-trigger" onClick={onCart} aria-label={`Open shopping bag, ${cartCount} items`}><ShoppingBagOutlinedIcon /><span className="cart-count">{cartCount > 99 ? '99+' : cartCount}</span></IconButton></div>
+      <div className="nav-actions"><ProductSearchInput className="navbar-search" value={searchQuery} onChange={onSearchQueryChange} onFocus={onSearchFocus} /><IconButton className="desktop-theme-toggle" onClick={onTheme} aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}>{dark ? <LightModeOutlinedIcon /> : <DarkModeOutlinedIcon />}</IconButton><IconButton className="profile-trigger" onClick={() => { location.hash = 'account/profile'; closeMenu(); }} aria-label="Open your profile"><PersonOutlinedIcon /></IconButton><IconButton className={`wishlist-trigger relative ${wishlistCount ? 'text-rose-600' : ''}`} onClick={onWishlist} aria-label={`View liked products, ${wishlistCount} saved`}><FavoriteBorderIcon /><span className={`absolute -right-1 -top-px grid h-[15px] min-w-[15px] place-content-center rounded-full bg-rose-600 px-[3px] text-[9px] font-bold text-white ${wishlistCount ? '' : 'hidden'}`}>{wishlistCount > 99 ? '99+' : wishlistCount}</span></IconButton><IconButton className="cart-trigger" onClick={onCart} aria-label={`Open shopping bag, ${cartCount} items`}><ShoppingBagOutlinedIcon /><span className="cart-count">{cartCount > 99 ? '99+' : cartCount}</span></IconButton></div>
     </div></header>
   </>;
 }

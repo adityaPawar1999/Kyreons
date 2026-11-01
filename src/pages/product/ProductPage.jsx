@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
@@ -8,14 +8,19 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ProductGrid from '../../components/product/ProductGrid.jsx';
 import ReviewsSection from '../../components/product/ReviewsSection.jsx';
 import { formatMoney, products } from '../../utils/store.js';
+import '../../styles/inventory-visibility.css';
 
-export default function ProductPage({ product, onQuickAdd, onOpen, onBag, wishlist = [], onToggleWishlist }) {
+export default function ProductPage({ product, onQuickAdd, onOpen, onBag, wishlist = [], onToggleWishlist, isSignedIn = false }) {
   const [imageIndex, setImageIndex] = useState(0);
   const [size, setSize] = useState(product.sizes[1] || product.sizes[0]);
   const [colorIndex, setColorIndex] = useState(0);
   const [message, setMessage] = useState('');
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const [detailsExpanded, setDetailsExpanded] = useState(false);
+  useEffect(() => {
+    document.documentElement.classList.toggle('hide-inventory', !isSignedIn);
+    return () => document.documentElement.classList.remove('hide-inventory');
+  }, [isSignedIn]);
   const related = products.filter((item) => item.id !== product.id && (item.category === product.category || item.tags.some((tag) => product.tags.includes(tag)))).slice(0, 4);
   const selectedStock = product.stock ? Number(product.stock[size] ?? 0) : null;
 

@@ -35,11 +35,12 @@ const policies = {
   },
   privacy: {
     title: 'Privacy policy',
-    intro: 'This storefront is a demo today. Here is what it currently stores and what happens when connected services are enabled.',
+    intro: 'Order details are stored securely in Firebase and linked to an anonymous customer ID saved by your browser.',
     sections: [
       ['Data stored in your browser', 'Your cart, wishlist, and theme preference are saved in local browser storage so they remain available on your device.'],
-      ['Checkout details', 'The current checkout is a demonstration. It displays the details you enter in an on-page invoice preview and does not send them to an order system or payment processor. Avoid entering sensitive information.'],
-      ['Contact and newsletter', 'The contact form prepares a message in your email application. If newsletter signup is connected, the email address you submit is sent to the configured signup endpoint and its email service.'],
+      ['Checkout and orders', 'When you save an order, your name, contact details, delivery address, and item details are saved in Firebase Firestore. Your order history is tied to an anonymous browser identity, so it is available from the same browser profile.'],
+      ['Customer profile', 'If you create an account and save your profile, your name, phone number, and delivery address are stored in Firebase Firestore and available when you log in.'],
+      ['Contact and newsletter', 'The contact form prepares a message in your email application. Newsletter email addresses are stored separately in the Firebase Firestore newsletterSubscribers collection and are not readable from the storefront. Newsletter signup does not require an account.'],
       ['Questions or requests', 'For privacy questions or requests about information you sent to Kyreons, email kyreons.studio@gmail.com.'],
     ],
   },
@@ -49,7 +50,7 @@ const policies = {
     sections: [
       ['Product information', 'We make a reasonable effort to show products, colors, sizes, and prices accurately. Color appearance can vary by display. Please contact us if you need help before ordering.'],
       ['Prices and availability', 'Prices and availability may change. The amount and applicable charges should be reviewed at checkout before an order is placed.'],
-      ['Checkout status', 'The storefront checkout is currently a demo and does not accept payment or create a confirmed order. An invoice preview shown after form submission is not a payment receipt or order confirmation.'],
+      ['Checkout status', 'The storefront saves order details but does not accept payment. Saved orders are pending payment and are not a payment receipt or a paid order confirmation.'],
       ['Contact', 'For questions about these terms, email kyreons.studio@gmail.com. These terms do not remove consumer rights that apply under law.'],
     ],
   },

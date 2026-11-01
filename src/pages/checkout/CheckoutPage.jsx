@@ -1,27 +1,84 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { formatMoney, products } from '../../utils/store.js';
+import { getCustomerProfile, saveOrder } from '../../services/firebase.js';
 
 const inputClass = 'w-full border border-neutral-300 bg-transparent px-3 py-3 text-sm text-neutral-900 outline-none transition-colors placeholder:text-neutral-400 focus:border-neutral-900 dark:border-neutral-700 dark:text-white dark:placeholder:text-neutral-500 dark:focus:border-neutral-300';
 
-export default function CheckoutPage({ cart, onChangeQuantity, onChangeSize, onRemove }) {
+const emptyCustomerDetails = { firstName: '', lastName: '', phone: '', email: '', address: '', address2: '', city: '', region: '', postalCode: '', country: 'India' };
+
+export default function CheckoutPage({ cart, user, onChangeQuantity, onChangeSize, onRemove }) {
   const [submitted, setSubmitted] = useState(false);
   const [invoice, setInvoice] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
+  const [customerDetails, setCustomerDetails] = useState(emptyCustomerDetails);
+  const [profileLoading, setProfileLoading] = useState(false);
   const items = cart.map((item) => ({ ...item, product: products.find((product) => product.id === item.id) })).filter((item) => item.product);
   const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
-  function handleSubmit(event) {
+  useEffect(() => {
+    if (!user || user.isAnonymous) {
+      setCustomerDetails(emptyCustomerDetails);
+      setProfileLoading(false);
+      return undefined;
+    }
+    let active = true;
+    setProfileLoading(true);
+    getCustomerProfile(user.uid, user.email)
+      .then((profile) => {
+        if (!active) return;
+        const nameParts = (profile?.name || user.displayName || '').split(' ');
+        setCustomerDetails({
+          ...emptyCustomerDetails,
+          ...profile,
+          firstName: profile?.firstName || nameParts.shift() || '',
+          lastName: profile?.lastName || nameParts.join(' '),
+          email: user.email || profile?.email || '',
+        });
+      })
+      .catch((error) => {
+        console.error('Could not load checkout profile:', error);
+        if (active) setCustomerDetails({ ...emptyCustomerDetails, email: user.email || '' });
+      })
+      .finally(() => { if (active) setProfileLoading(false); });
+    return () => { active = false; };
+  }, [user]);
+
+  const updateCustomerDetail = (event) => {
+    const { name, value } = event.target;
+    setCustomerDetails((current) => ({ ...current, [name]: value }));
+  };
+
+  async function handleSubmit(event) {
     event.preventDefault();
+    if (saving) return;
+    setSaving(true);
+    setSaveError('');
     const formData = new FormData(event.currentTarget);
-    setInvoice({
-      number: `KYR-${Date.now()}`,
-      customer: Object.fromEntries(formData.entries()),
-      date: new Date().toLocaleDateString(),
-    });
-    setSubmitted(true);
+    const fields = Object.fromEntries(formData.entries());
+    const orderNumber = `KYR-${Date.now()}`;
+    try {
+      await saveOrder({
+        orderNumber,
+        email: fields.email,
+        customer: { name: `${fields.firstName} ${fields.lastName}`.trim(), ...fields },
+        items: items.map(({ product, quantity, size, color }) => ({ productId: product.id, name: product.name, price: product.price, quantity, size, color })),
+        subtotal,
+        total: subtotal,
+        currency: 'INR',
+        status: 'pending_payment',
+      });
+      setInvoice({ number: orderNumber, customer: fields, date: new Date().toLocaleDateString() });
+      setSubmitted(true);
+    } catch (error) {
+      setSaveError(error.message || 'We could not save your order. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   }
 
   if (!items.length) {
@@ -39,27 +96,29 @@ export default function CheckoutPage({ cart, onChangeQuantity, onChangeSize, onR
         <p className="text-[9px] font-semibold tracking-[.17em] text-neutral-500">YOUR KYREONS / SECURE CHECKOUT</p>
         <h1 className="mt-3 font-display text-[clamp(42px,6vw,68px)] font-medium leading-none tracking-[-.075em] text-neutral-900 dark:text-white">Almost yours.</h1>
         <form className="mt-9 space-y-10" onSubmit={handleSubmit}>
+          {profileLoading && <p className="text-xs text-neutral-500" role="status">Loading your saved details…</p>}
           <fieldset className="space-y-4">
             <legend className="mb-4 font-display text-2xl font-medium tracking-[-.04em] text-neutral-900 dark:text-white">Shipping address</legend>
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="text-xs text-neutral-600 dark:text-neutral-300">First name<input className={`${inputClass} mt-2`} name="firstName" autoComplete="given-name" required /></label>
-              <label className="text-xs text-neutral-600 dark:text-neutral-300">Last name<input className={`${inputClass} mt-2`} name="lastName" autoComplete="family-name" required /></label>
+              <label className="text-xs text-neutral-600 dark:text-neutral-300">First name<input className={`${inputClass} mt-2`} name="firstName" autoComplete="given-name" value={customerDetails.firstName} onChange={updateCustomerDetail} required /></label>
+              <label className="text-xs text-neutral-600 dark:text-neutral-300">Last name<input className={`${inputClass} mt-2`} name="lastName" autoComplete="family-name" value={customerDetails.lastName} onChange={updateCustomerDetail} required /></label>
             </div>
-            <label className="block text-xs text-neutral-600 dark:text-neutral-300">Phone number<input className={`${inputClass} mt-2`} name="phone" type="tel" autoComplete="tel" placeholder="For delivery updates" required /></label>
-            <label className="block text-xs text-neutral-600 dark:text-neutral-300">Email address<input className={`${inputClass} mt-2`} name="email" type="email" autoComplete="email" placeholder="you@example.com" required /></label>
-            <label className="block text-xs text-neutral-600 dark:text-neutral-300">Address<input className={`${inputClass} mt-2`} name="address" autoComplete="address-line1" placeholder="House number and street" required /></label>
-            <label className="block text-xs text-neutral-600 dark:text-neutral-300">Apartment, suite, etc. <span className="text-neutral-400">(optional)</span><input className={`${inputClass} mt-2`} name="address2" autoComplete="address-line2" /></label>
+            <label className="block text-xs text-neutral-600 dark:text-neutral-300">Phone number<input className={`${inputClass} mt-2`} name="phone" type="tel" autoComplete="tel" placeholder="For delivery updates" value={customerDetails.phone} onChange={updateCustomerDetail} required /></label>
+            <label className="block text-xs text-neutral-600 dark:text-neutral-300">Email address<input className={`${inputClass} mt-2`} name="email" type="email" autoComplete="email" placeholder="you@example.com" value={customerDetails.email} onChange={updateCustomerDetail} required /></label>
+            <label className="block text-xs text-neutral-600 dark:text-neutral-300">Address<input className={`${inputClass} mt-2`} name="address" autoComplete="address-line1" placeholder="House number and street" value={customerDetails.address} onChange={updateCustomerDetail} required /></label>
+            <label className="block text-xs text-neutral-600 dark:text-neutral-300">Apartment, suite, etc. <span className="text-neutral-400">(optional)</span><input className={`${inputClass} mt-2`} name="address2" autoComplete="address-line2" value={customerDetails.address2} onChange={updateCustomerDetail} /></label>
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="text-xs text-neutral-600 dark:text-neutral-300">City<input className={`${inputClass} mt-2`} name="city" autoComplete="address-level2" required /></label>
-              <label className="text-xs text-neutral-600 dark:text-neutral-300">State / region<input className={`${inputClass} mt-2`} name="region" autoComplete="address-level1" required /></label>
+              <label className="text-xs text-neutral-600 dark:text-neutral-300">City<input className={`${inputClass} mt-2`} name="city" autoComplete="address-level2" value={customerDetails.city} onChange={updateCustomerDetail} required /></label>
+              <label className="text-xs text-neutral-600 dark:text-neutral-300">State / region<input className={`${inputClass} mt-2`} name="region" autoComplete="address-level1" value={customerDetails.region} onChange={updateCustomerDetail} required /></label>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="text-xs text-neutral-600 dark:text-neutral-300">Postal code<input className={`${inputClass} mt-2`} name="postalCode" autoComplete="postal-code" required /></label>
-              <label className="text-xs text-neutral-600 dark:text-neutral-300">Country / region<select className={`${inputClass} mt-2`} name="country" autoComplete="country-name" defaultValue="India" required><option>India</option></select><span className="mt-1 block text-[10px] text-neutral-500">We currently ship within India only.</span></label>
+              <label className="text-xs text-neutral-600 dark:text-neutral-300">Postal code<input className={`${inputClass} mt-2`} name="postalCode" autoComplete="postal-code" value={customerDetails.postalCode} onChange={updateCustomerDetail} required /></label>
+              <label className="text-xs text-neutral-600 dark:text-neutral-300">Country / region<select className={`${inputClass} mt-2`} name="country" autoComplete="country-name" value={customerDetails.country} onChange={updateCustomerDetail} required><option>India</option></select><span className="mt-1 block text-[10px] text-neutral-500">We currently ship within India only.</span></label>
             </div>
           </fieldset>
 
-          <button className="inline-flex w-full items-center justify-between gap-4 bg-[#d5ed52] px-5 py-4 text-xs font-bold tracking-[.1em] text-neutral-900 transition-colors hover:bg-[#c4dc42] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900" type="submit"><span>CONTINUE TO PAYMENT</span><ArrowForwardIcon /></button>
+          {saveError && <p className="text-sm text-rose-700 dark:text-rose-300" role="alert">{saveError}</p>}
+          <button className="inline-flex w-full items-center justify-between gap-4 bg-[#d5ed52] px-5 py-4 text-xs font-bold tracking-[.1em] text-neutral-900 transition-colors hover:bg-[#c4dc42] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 disabled:cursor-wait disabled:opacity-60" type="submit" disabled={saving}><span>{saving ? 'SAVING ORDER…' : 'SAVE ORDER'}</span><ArrowForwardIcon /></button>
           <p className="flex items-center justify-center gap-2 text-[11px] text-neutral-500"><LockOutlinedIcon fontSize="small" /> Your information is used to prepare your order.</p>
         </form>
       </section>
@@ -92,14 +151,14 @@ function InvoiceOverlay({ invoice, items, subtotal, onClose }) {
         <div className="text-right text-xs leading-6 text-neutral-600 dark:text-neutral-300"><p><strong className="text-neutral-900 dark:text-white">INVOICE</strong> {invoice.number}</p><p>{invoice.date}</p></div>
       </header>
       <div className="grid gap-6 border-b border-neutral-300 py-6 text-sm dark:border-neutral-700 sm:grid-cols-2">
-        <div><h3 className="mb-2 text-[9px] font-semibold tracking-[.12em] text-neutral-500">BILLED TO</h3><p className="font-medium text-neutral-900 dark:text-white">{customer.firstName} {customer.lastName}</p><p className="text-neutral-600 dark:text-neutral-300">{customer.email}</p><p className="text-neutral-600 dark:text-neutral-300">{customer.phone}</p></div>
+        <div><h3 className="mb-2 text-[9px] font-semibold tracking-[.12em] text-neutral-500">CUSTOMER</h3><p className="font-medium text-neutral-900 dark:text-white">{customer.firstName} {customer.lastName}</p><p className="text-neutral-600 dark:text-neutral-300">{customer.email}</p><p className="text-neutral-600 dark:text-neutral-300">{customer.phone}</p></div>
         <div><h3 className="mb-2 text-[9px] font-semibold tracking-[.12em] text-neutral-500">DELIVERY ADDRESS</h3><p className="text-neutral-600 dark:text-neutral-300">{customer.address}{customer.address2 ? `, ${customer.address2}` : ''}</p><p className="text-neutral-600 dark:text-neutral-300">{customer.city}, {customer.region} {customer.postalCode}</p><p className="text-neutral-600 dark:text-neutral-300">{customer.country}</p></div>
       </div>
       <div className="py-6"><h3 className="mb-3 text-[9px] font-semibold tracking-[.12em] text-neutral-500">ORDER DETAILS</h3><ul className="divide-y divide-neutral-300 dark:divide-neutral-700">{items.map(({ key, product, quantity, size, color }) => <li className="flex justify-between gap-4 py-3 text-sm" key={key}><span className="min-w-0 text-neutral-700 dark:text-neutral-200">{product.name}<span className="block pt-1 text-xs text-neutral-500">{color} · Size {size} · Qty {quantity}</span></span><span className="shrink-0 font-medium tabular-nums text-neutral-900 dark:text-white">{formatMoney(product.price * quantity)}</span></li>)}</ul></div>
       <div className="space-y-3 border-t border-neutral-300 pt-5 text-sm dark:border-neutral-700"><div className="flex justify-between text-neutral-600 dark:text-neutral-300"><span>Subtotal</span><span className="tabular-nums">{formatMoney(subtotal)}</span></div><div className="flex justify-between text-neutral-600 dark:text-neutral-300"><span>Shipping</span><span>Complimentary</span></div><div className="flex justify-between border-t border-neutral-300 pt-4 text-base font-semibold text-neutral-900 dark:border-neutral-700 dark:text-white"><span>Total</span><span className="tabular-nums">{formatMoney(subtotal)}</span></div></div>
       <p className="mt-8 border-t border-neutral-300 pt-6 text-center font-display text-2xl text-neutral-900 dark:border-neutral-700 dark:text-white">Thank you for choosing Kyreons.</p>
-      <p className="mt-2 text-center text-xs text-neutral-500">Your order details are ready. Payment setup is needed to complete your order.</p>
-      <button className="mt-6 block w-full bg-[#d5ed52] px-5 py-3 text-xs font-bold tracking-[.1em] text-neutral-900" type="button" onClick={onClose}>BACK TO CHECKOUT</button>
+      <p className="mt-2 text-center text-xs text-neutral-500">Your order has been saved. Payment setup is needed to complete it.</p>
+      <a className="mt-6 block w-full bg-[#d5ed52] px-5 py-3 text-center text-xs font-bold tracking-[.1em] text-neutral-900" href="#my-orders">VIEW MY ORDERS</a>
     </section>
   </div>;
 }

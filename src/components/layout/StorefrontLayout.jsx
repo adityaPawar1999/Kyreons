@@ -14,9 +14,11 @@ import OurStory from '../../pages/our-story/OurStory.jsx';
 import ProductSearchInput from '../product/ProductSearchInput.jsx';
 import CheckoutPage from '../../pages/checkout/CheckoutPage.jsx';
 import PolicyPage from '../../pages/policies/PolicyPage.jsx';
+import MyOrdersPage from '../../pages/orders/MyOrdersPage.jsx';
+import AccountPage from '../../pages/account/AccountPage.jsx';
 
 export default function StorefrontLayout({ store }) {
-  const { cart, setCart, cartCount, dark, setDark, drawerOpen, setDrawerOpen, menuOpen, setMenuOpen, route, productRoute, currentProduct, toast, openProduct, navigateCategory, quickAdd, addToBag, changeQuantity, changeSize, wishlist, toggleWishlist } = store;
+  const { cart, setCart, cartCount, dark, setDark, drawerOpen, setDrawerOpen, menuOpen, setMenuOpen, route, productRoute, currentProduct, toast, openProduct, navigateCategory, quickAdd, addToBag, changeQuantity, changeSize, wishlist, toggleWishlist, isSignedIn, authReady, accountUser } = store;
   const [searchQuery, setSearchQuery] = useState('');
   const updateSearchQuery = (value) => {
     setSearchQuery(value);
@@ -27,19 +29,23 @@ export default function StorefrontLayout({ store }) {
   return <div className="storefront">
     <Navbar dark={dark} onTheme={() => setDark((value) => !value)} onCart={() => setDrawerOpen(true)} onWishlist={() => { location.hash = 'wishlist'; setMenuOpen(false); }} onCategory={navigateCategory} wishlistCount={wishlist.length} cartCount={cartCount} menuOpen={menuOpen} setMenuOpen={setMenuOpen} route={route} searchQuery={searchQuery} onSearchQueryChange={updateSearchQuery} onSearchFocus={focusSearchResults} />
     <main>{currentProduct
-      ? <ProductPage key={currentProduct.id} product={currentProduct} onQuickAdd={quickAdd} onOpen={openProduct} onBag={addToBag} wishlist={wishlist} onToggleWishlist={toggleWishlist} />
+      ? <ProductPage key={currentProduct.id} product={currentProduct} onQuickAdd={quickAdd} onOpen={openProduct} onBag={addToBag} wishlist={wishlist} onToggleWishlist={toggleWishlist} isSignedIn={isSignedIn} />
       : productRoute
         ? <NotFoundPage />
+        : route === 'account' || route.startsWith('account/')
+          ? <AccountPage mode={route.split('/')[1] || 'home'} />
         : route === 'contact'
           ? <ContactPage />
           : route.startsWith('policy/')
             ? <PolicyPage type={route.split('/')[1]} />
             : route === 'checkout'
-              ? <CheckoutPage cart={cart} onChangeQuantity={changeQuantity} onChangeSize={changeSize} onRemove={(key) => setCart((current) => current.filter((item) => item.key !== key))} />
+              ? <CheckoutPage cart={cart} user={accountUser} onChangeQuantity={changeQuantity} onChangeSize={changeSize} onRemove={(key) => setCart((current) => current.filter((item) => item.key !== key))} />
           : route === 'our-story'
             ? <OurStory />
+          : route === 'my-orders'
+            ? <MyOrdersPage />
           : route === 'wishlist'
-            ? <WishlistPage wishlist={wishlist} onToggleWishlist={toggleWishlist} onOpen={openProduct} onQuickAdd={quickAdd} />
+            ? <WishlistPage wishlist={wishlist} isSignedIn={isSignedIn} authReady={authReady} onToggleWishlist={toggleWishlist} onOpen={openProduct} onQuickAdd={quickAdd} />
             : route === 'shop-all'
               ? <CollectionPage type="all" onOpen={openProduct} onQuickAdd={quickAdd} wishlist={wishlist} onToggleWishlist={toggleWishlist} />
             : route === 'shirts'
