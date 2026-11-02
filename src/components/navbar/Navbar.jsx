@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -7,12 +8,28 @@ import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import LogoutIcon from '@mui/icons-material/Logout';
 import IconButton from '../buttons/IconButton.jsx';
 import BrandLogo from '../layout/BrandLogo.jsx';
 import ProductSearchInput from '../product/ProductSearchInput.jsx';
 
-export default function Navbar({ dark, onTheme, onCart, onCategory, onWishlist, wishlistCount, cartCount, menuOpen, setMenuOpen, route, searchQuery, onSearchQueryChange, onSearchFocus }) {
+export default function Navbar({ dark, onTheme, onCart, onCategory, onWishlist, onLogout, isSignedIn, firstName, wishlistCount, cartCount, menuOpen, setMenuOpen, route, searchQuery, onSearchQueryChange, onSearchFocus }) {
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const accountMenuRef = useRef(null);
   const closeMenu = () => setMenuOpen(false);
+  useEffect(() => {
+    if (!accountMenuOpen) return undefined;
+    const closeOnOutsideClick = (event) => {
+      if (!accountMenuRef.current?.contains(event.target)) setAccountMenuOpen(false);
+    };
+    const closeOnEscape = (event) => { if (event.key === 'Escape') setAccountMenuOpen(false); };
+    document.addEventListener('pointerdown', closeOnOutsideClick);
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsideClick);
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [accountMenuOpen]);
   const navItems = [
     { label: 'HOME', href: '#home', active: ['home', 'shop', ''].includes(route) },
     { label: 'SHOP ALL', href: '#shop-all', active: route === 'shop-all' },
@@ -49,7 +66,13 @@ export default function Navbar({ dark, onTheme, onCart, onCategory, onWishlist, 
           <span>{dark ? 'LIGHT THEME' : 'DARK THEME'}</span>
         </button>
       </nav>
-      <div className="nav-actions"><ProductSearchInput className="navbar-search" value={searchQuery} onChange={onSearchQueryChange} onFocus={onSearchFocus} /><IconButton className="desktop-theme-toggle" onClick={onTheme} aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}>{dark ? <LightModeOutlinedIcon /> : <DarkModeOutlinedIcon />}</IconButton><IconButton className="profile-trigger" onClick={() => { location.hash = 'account/profile'; closeMenu(); }} aria-label="Open your profile"><PersonOutlinedIcon /></IconButton><IconButton className={`wishlist-trigger relative ${wishlistCount ? 'text-rose-600' : ''}`} onClick={onWishlist} aria-label={`View liked products, ${wishlistCount} saved`}><FavoriteBorderIcon /><span className={`absolute -right-1 -top-px grid h-[15px] min-w-[15px] place-content-center rounded-full bg-rose-600 px-[3px] text-[9px] font-bold text-white ${wishlistCount ? '' : 'hidden'}`}>{wishlistCount > 99 ? '99+' : wishlistCount}</span></IconButton><IconButton className="cart-trigger" onClick={onCart} aria-label={`Open shopping bag, ${cartCount} items`}><ShoppingBagOutlinedIcon /><span className="cart-count">{cartCount > 99 ? '99+' : cartCount}</span></IconButton></div>
+      <div className="nav-actions"><ProductSearchInput className="navbar-search" value={searchQuery} onChange={onSearchQueryChange} onFocus={onSearchFocus} /><IconButton className="desktop-theme-toggle" onClick={onTheme} aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}>{dark ? <LightModeOutlinedIcon /> : <DarkModeOutlinedIcon />}</IconButton><IconButton className={`wishlist-trigger relative ${wishlistCount ? 'text-rose-600' : ''}`} onClick={onWishlist} aria-label={`View liked products, ${wishlistCount} saved`}><FavoriteBorderIcon /><span className={`absolute -right-1 -top-px grid h-[15px] min-w-[15px] place-content-center rounded-full bg-rose-600 px-[3px] text-[9px] font-bold text-white ${wishlistCount ? '' : 'hidden'}`}>{wishlistCount > 99 ? '99+' : wishlistCount}</span></IconButton><IconButton className="cart-trigger" onClick={onCart} aria-label={`Open shopping bag, ${cartCount} items`}><ShoppingBagOutlinedIcon /><span className="cart-count">{cartCount > 99 ? '99+' : cartCount}</span></IconButton><div className="relative" ref={accountMenuRef}>
+        <IconButton className="profile-trigger" onClick={() => { closeMenu(); if (isSignedIn) setAccountMenuOpen((open) => !open); else location.hash = 'account/login'; }} aria-label={isSignedIn ? 'Open account menu' : 'Log in'} aria-expanded={isSignedIn ? accountMenuOpen : undefined} aria-haspopup={isSignedIn ? 'menu' : undefined}><PersonOutlinedIcon /></IconButton>
+        {isSignedIn && accountMenuOpen && <div className="absolute right-0 top-[calc(100%+10px)] z-50 w-48 border border-neutral-300 bg-[var(--bg)] py-1 shadow-xl dark:border-neutral-700" role="menu" aria-label="Account options">
+          <a className="block px-4 py-3 text-[9px] font-semibold tracking-[.12em] text-neutral-800 transition-colors hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800" href="#account/profile" role="menuitem" onClick={() => setAccountMenuOpen(false)}>VIEW PROFILE</a>
+          <button className="flex w-full items-center gap-2 border-t border-neutral-200 px-4 py-3 text-left text-[9px] font-semibold tracking-[.12em] text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-white" type="button" role="menuitem" onClick={() => { setAccountMenuOpen(false); onLogout(); }}><LogoutIcon fontSize="small" /> LOG OUT</button>
+        </div>}
+      </div></div>
     </div></header>
   </>;
 }

@@ -15,7 +15,9 @@ export default function LoginPage() {
     setError('');
     try {
       await loginAccount(form.get('email'), form.get('password'));
-      location.hash = 'account/profile';
+      const nextRoute = sessionStorage.getItem('kyreons-after-login');
+      sessionStorage.removeItem('kyreons-after-login');
+      location.hash = nextRoute || 'account/profile';
     } catch (authError) {
       setError(authError.code === 'auth/invalid-credential'
         ? 'Email or password is incorrect.'

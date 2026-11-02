@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import useStoredCart from './useStoredCart.js';
 import { products } from '../utils/store.js';
 import { normalizeCart } from '../utils/cart.js';
-import { getCustomerCart, getCustomerWishlist, getSignedInAccount, saveCustomerCart, toggleCustomerWishlist, watchAuthUser } from '../services/firebase.js';
+import { getCustomerCart, getCustomerProfile, getCustomerWishlist, getSignedInAccount, saveCustomerCart, toggleCustomerWishlist, watchAuthUser } from '../services/firebase.js';
 
 const THEME_KEY = 'kyreons-theme-v1';
 
@@ -15,6 +15,7 @@ export default function useStorefront() {
   const [cart, setCart] = useStoredCart();
   const [wishlist, setWishlist] = useState([]);
   const [accountUser, setAccountUser] = useState(null);
+  const [accountFirstName, setAccountFirstName] = useState('');
   const [authReady, setAuthReady] = useState(false);
   const [cartReadyFor, setCartReadyFor] = useState(null);
   const [dark, setDark] = useState(() => localStorage.getItem(THEME_KEY) === 'dark');
@@ -22,7 +23,8 @@ export default function useStorefront() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [route, setRoute] = useState(getRouteFromHash);
   const [toast, setToast] = useState('');
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const isSignedIn = authReady && Boolean(accountUser && !accountUser.isAnonymous);
+  const cartCount = isSignedIn ? cart.reduce((sum, item) => sum + item.quantity, 0) : 0;
   const productRoute = route.startsWith('product/') ? route.split('/')[1] : null;
   const currentProduct = products.find((product) => product.id === productRoute);
 
@@ -43,6 +45,28 @@ export default function useStorefront() {
       return () => { active = false; };
     }
   }, []);
+
+  useEffect(() => {
+    if (!authReady || !accountUser || accountUser.isAnonymous) {
+      setAccountFirstName('');
+      return undefined;
+    }
+    let active = true;
+    const displayName = accountUser.displayName?.trim().split(/\s+/)[0] || '';
+    setAccountFirstName(displayName);
+    getCustomerProfile(accountUser.uid, accountUser.email)
+      .then((profile) => {
+        if (active) setAccountFirstName(profile?.firstName?.trim() || profile?.name?.trim().split(/\s+/)[0] || displayName);
+      })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [accountUser, authReady]);
+
+  // The browser cart is a shared local cache. Drop it whenever auth resolves
+  // or changes so one account's items cannot carry into another account.
+  useEffect(() => {
+    if (authReady) setCart([]);
+  }, [accountUser?.uid, authReady, setCart]);
 
   useEffect(() => {
     if (!authReady) return undefined;
@@ -159,6 +183,10 @@ export default function useStorefront() {
   };
   const navigateCategory = (category) => { location.hash = `category/${category}`; };
   const quickAdd = (product, size = null, color = null) => {
+    if (!isSignedIn) {
+      setDrawerOpen(true);
+      return;
+    }
     const itemSize = size || product.sizes[1] || product.sizes[0];
     const itemColor = color || product.colors[0].name;
     const key = `${product.id}::${itemSize}::${itemColor}`;
@@ -194,7 +222,8 @@ export default function useStorefront() {
     cart,
     wishlist,
     accountUser,
-    isSignedIn: authReady && Boolean(accountUser && !accountUser.isAnonymous),
+    accountFirstName,
+    isSignedIn,
     authReady,
     setCart,
     cartCount,

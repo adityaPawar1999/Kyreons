@@ -16,30 +16,48 @@ import CheckoutPage from '../../pages/checkout/CheckoutPage.jsx';
 import PolicyPage from '../../pages/policies/PolicyPage.jsx';
 import MyOrdersPage from '../../pages/orders/MyOrdersPage.jsx';
 import AccountPage from '../../pages/account/AccountPage.jsx';
+import { logoutAccount, saveCustomerCart } from '../../services/firebase.js';
 
 export default function StorefrontLayout({ store }) {
-  const { cart, setCart, cartCount, dark, setDark, drawerOpen, setDrawerOpen, menuOpen, setMenuOpen, route, productRoute, currentProduct, toast, openProduct, navigateCategory, quickAdd, addToBag, changeQuantity, changeSize, wishlist, toggleWishlist, isSignedIn, authReady, accountUser } = store;
+  const { cart, setCart, cartCount, dark, setDark, drawerOpen, setDrawerOpen, menuOpen, setMenuOpen, route, productRoute, currentProduct, toast, openProduct, navigateCategory, quickAdd, addToBag, changeQuantity, changeSize, wishlist, toggleWishlist, isSignedIn, authReady, accountUser, accountFirstName } = store;
   const [searchQuery, setSearchQuery] = useState('');
   const updateSearchQuery = (value) => {
     setSearchQuery(value);
     if (value.trim() && !['home', 'shop', ''].includes(route)) location.hash = 'home';
   };
   const focusSearchResults = () => document.querySelector('#shop')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const logoutFromNavbar = async () => {
+    try {
+      let cartSaveFailed = false;
+      try { await saveCustomerCart(accountUser.uid, accountUser.email, cart); }
+      catch { cartSaveFailed = true; }
+      await logoutAccount();
+      if (cartSaveFailed) window.dispatchEvent(new CustomEvent('kyreons:toast', { detail: 'Logged out, but your cart could not be synced.' }));
+      location.hash = 'account/login';
+    } catch (error) {
+      console.error('Could not log out:', error);
+      window.dispatchEvent(new CustomEvent('kyreons:toast', { detail: 'Could not log out. Please try again.' }));
+    }
+  };
 
   return <div className="storefront">
-    <Navbar dark={dark} onTheme={() => setDark((value) => !value)} onCart={() => setDrawerOpen(true)} onWishlist={() => { location.hash = 'wishlist'; setMenuOpen(false); }} onCategory={navigateCategory} wishlistCount={wishlist.length} cartCount={cartCount} menuOpen={menuOpen} setMenuOpen={setMenuOpen} route={route} searchQuery={searchQuery} onSearchQueryChange={updateSearchQuery} onSearchFocus={focusSearchResults} />
+    <Navbar dark={dark} onTheme={() => setDark((value) => !value)} onCart={() => setDrawerOpen(true)} onWishlist={() => { location.hash = 'wishlist'; setMenuOpen(false); }} onLogout={logoutFromNavbar} isSignedIn={isSignedIn} firstName={accountFirstName} onCategory={navigateCategory} wishlistCount={wishlist.length} cartCount={cartCount} menuOpen={menuOpen} setMenuOpen={setMenuOpen} route={route} searchQuery={searchQuery} onSearchQueryChange={updateSearchQuery} onSearchFocus={focusSearchResults} />
     <main>{currentProduct
       ? <ProductPage key={currentProduct.id} product={currentProduct} onQuickAdd={quickAdd} onOpen={openProduct} onBag={addToBag} wishlist={wishlist} onToggleWishlist={toggleWishlist} isSignedIn={isSignedIn} />
       : productRoute
         ? <NotFoundPage />
         : route === 'account' || route.startsWith('account/')
-          ? <AccountPage mode={route.split('/')[1] || 'home'} />
+          ? <AccountPage mode={route.split('/')[1] || 'home'} cart={cart} />
         : route === 'contact'
           ? <ContactPage />
           : route.startsWith('policy/')
             ? <PolicyPage type={route.split('/')[1]} />
             : route === 'checkout'
-              ? <CheckoutPage cart={cart} user={accountUser} onChangeQuantity={changeQuantity} onChangeSize={changeSize} onRemove={(key) => setCart((current) => current.filter((item) => item.key !== key))} />
+              ? !authReady
+                ? <section className="mx-auto min-h-[55vh] max-w-5xl px-5 py-16 text-sm text-neutral-500 sm:px-8" role="status">Checking your account…</section>
+                : !isSignedIn
+                  ? <section className="mx-auto grid min-h-[55vh] max-w-5xl content-center px-5 py-16 sm:px-8"><p className="text-[9px] font-semibold tracking-[.17em] text-neutral-500">YOUR KYREONS / CHECKOUT</p><h1 className="mt-4 font-display text-5xl font-medium tracking-[-.07em] text-neutral-900 dark:text-white">Log in to check out.</h1><p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">Sign in to use your cart and place your order.</p><a className="mt-7 inline-flex w-fit items-center gap-2 border-b border-current pb-1 text-xs font-semibold text-neutral-900 dark:text-white" href="#account/login" onClick={() => sessionStorage.setItem('kyreons-after-login', 'checkout')}>LOG IN</a></section>
+                  : <CheckoutPage cart={cart} user={accountUser} onChangeQuantity={changeQuantity} onChangeSize={changeSize} onRemove={(key) => setCart((current) => current.filter((item) => item.key !== key))} />
           : route === 'our-story'
             ? <OurStory />
           : route === 'my-orders'
@@ -64,7 +82,7 @@ export default function StorefrontLayout({ store }) {
                 : <NotFoundPage />}</main>
     <SiteFooter />
     <div className="bottom-search-bar"><ProductSearchInput value={searchQuery} onChange={updateSearchQuery} onFocus={focusSearchResults} /></div>
-    <CartDrawer open={drawerOpen} cart={cart} onClose={() => setDrawerOpen(false)} onCheckout={() => { setDrawerOpen(false); location.hash = 'checkout'; }} onOpenProduct={(id) => { setDrawerOpen(false); openProduct(id); window.scrollTo({ top: 0, behavior: 'smooth' }); }} onChangeQuantity={changeQuantity} onChangeSize={changeSize} onRemove={(key) => setCart((current) => current.filter((item) => item.key !== key))} />
+    <CartDrawer open={drawerOpen} cart={cart} isSignedIn={isSignedIn} onClose={() => setDrawerOpen(false)} onCheckout={() => { setDrawerOpen(false); location.hash = 'checkout'; }} onOpenProduct={(id) => { setDrawerOpen(false); openProduct(id); window.scrollTo({ top: 0, behavior: 'smooth' }); }} onChangeQuantity={changeQuantity} onChangeSize={changeSize} onRemove={(key) => setCart((current) => current.filter((item) => item.key !== key))} />
     {toast && <div className="!fixed !left-auto !top-6 !right-6 !bottom-auto !z-[100] !max-w-[calc(100vw-2rem)] !translate-x-0 !translate-y-0 flex items-center gap-3 bg-[#d5ed52]/80 px-4 py-3 text-sm font-semibold text-[#191b17] backdrop-blur-sm" role="status" aria-live="polite"><CheckCircleRoundedIcon className="!h-5 !w-5 shrink-0" aria-hidden="true" /><span>{toast}</span></div>}
   </div>;
 }

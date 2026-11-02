@@ -8,10 +8,9 @@ import CampaignCards from './CampaignCards.jsx';
 import heroSlideOne from './HeroSlideOne.jsx';
 import heroSlideTwo from './HeroSlideTwo.jsx';
 import heroSlideThree from './HeroSlideThree.jsx';
-import heroSlideFour from './HeroSlideFour.jsx';
 import { saveNewsletterEmail } from '../../services/firebase.js';
 
-const heroSlides = [heroSlideOne, heroSlideTwo, heroSlideThree, heroSlideFour];
+const heroSlides = [heroSlideOne, heroSlideTwo, heroSlideThree];
 
 function Newsletter() {
   const [message, setMessage] = useState('');
@@ -135,41 +134,14 @@ function DesktopHeroSlideView({ slide, active }) {
           </span>
         </div>
         <div className="relative min-h-[260px] overflow-hidden md:min-h-0">
-          <img className="absolute inset-0 h-full w-full object-cover object-[center_35%]" src={slide.image} alt={slide.imageAlt} loading={imageLoading} fetchPriority={active ? 'high' : 'auto'} decoding="async" />
+          {slide.secondaryImage ? <div className="absolute inset-0 grid grid-cols-2 gap-1.5">
+            <img className="h-full min-h-0 w-full object-cover object-[center_35%]" src={slide.image} alt={slide.imageAlt} loading={imageLoading} fetchPriority={active ? 'high' : 'auto'} decoding="async" />
+            <img className="h-full min-h-0 w-full object-cover object-center" src={slide.secondaryImage} alt={slide.secondaryImageAlt} loading={imageLoading} decoding="async" />
+          </div> : <img className="absolute inset-0 h-full w-full object-cover object-[center_35%]" src={slide.image} alt={slide.imageAlt} loading={imageLoading} fetchPriority={active ? 'high' : 'auto'} decoding="async" />}
           <span className="absolute bottom-5 right-5 text-[8px] font-semibold tracking-[.16em] text-white">
             MADE TO BE YOURS
           </span>
         </div>
-      </div>
-    );
-  }
-
-  if (slide.layout === 'image-collage') {
-    return (
-      <div className="absolute inset-0 grid bg-neutral-900 md:grid-cols-[.38fr_.62fr]">
-        <div className="relative z-10 flex flex-col items-start justify-center bg-neutral-900 px-[7%] py-10 md:px-[12%]">
-          <span className="mb-5 text-[9px] font-semibold tracking-[.17em] text-neutral-400">
-            {slide.eyebrow}
-          </span>
-          <h1 className="font-display text-[clamp(48px,7vw,88px)] font-semibold leading-[.84] tracking-[-.095em] text-white">
-            {slide.titleLineOne}<br />
-            <span className="text-acid">{slide.titleLineTwo}</span>
-          </h1>
-          <p className="mt-5 max-w-[330px] text-xs leading-6 text-neutral-300">
-            {slide.description}
-          </p>
-          <a className="mt-7 inline-flex items-center gap-3 bg-acid px-4 py-4 text-[9px] font-bold tracking-[.12em] text-neutral-900 transition-colors hover:bg-white hover:!text-black" href={slide.href}>
-            {slide.ctaLabel} <ArrowOutwardIcon />
-          </a>
-        </div>
-        <div className="grid min-h-[300px] grid-cols-[1.2fr_.8fr] grid-rows-2 gap-1.5 p-1.5 md:min-h-0">
-          <img className="row-span-2 h-full min-h-0 w-full object-cover" src={slide.image} alt={slide.imageAlt} loading={imageLoading} fetchPriority={active ? 'high' : 'auto'} decoding="async" />
-          <img className="h-full min-h-0 w-full object-cover" src={slide.secondaryImage} alt={slide.secondaryImageAlt} loading={imageLoading} decoding="async" />
-          <img className="h-full min-h-0 w-full object-cover" src={slide.tertiaryImage} alt={slide.tertiaryImageAlt} loading={imageLoading} decoding="async" />
-        </div>
-        <span className="absolute bottom-4 right-5 z-20 text-[8px] font-semibold tracking-[.16em] text-white/80">
-          KYREONS / CHAPTER 04
-        </span>
       </div>
     );
   }
@@ -194,14 +166,10 @@ function HeroSlideView({ slide, active }) {
   return (
     <>
       <div className="absolute inset-0 min-[651px]:hidden">
-        <img
-          className="absolute inset-0 h-full w-full object-cover object-[center_38%]"
-          src={slide.image}
-          alt={slide.imageAlt}
-          loading={active ? 'eager' : 'lazy'}
-          fetchPriority={active ? 'high' : 'auto'}
-          decoding="async"
-        />
+        {slide.secondaryImage ? <div className="absolute inset-0 grid grid-cols-2 gap-1.5">
+          <img className="h-full min-h-0 w-full object-cover object-[center_38%]" src={slide.image} alt={slide.imageAlt} loading={active ? 'eager' : 'lazy'} fetchPriority={active ? 'high' : 'auto'} decoding="async" />
+          <img className="h-full min-h-0 w-full object-cover object-center" src={slide.secondaryImage} alt={slide.secondaryImageAlt} loading={active ? 'eager' : 'lazy'} decoding="async" />
+        </div> : <img className="absolute inset-0 h-full w-full object-cover object-[center_38%]" src={slide.image} alt={slide.imageAlt} loading={active ? 'eager' : 'lazy'} fetchPriority={active ? 'high' : 'auto'} decoding="async" />}
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/10" />
         <div className="absolute inset-x-0 bottom-0 h-[78%] bg-gradient-to-t from-black/45 to-transparent" />
         <HeroCopy
@@ -232,11 +200,9 @@ export default function HomePage({
 }) {
   const [filter, setFilter] = useState(initialFilter);
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
-  const [heroSlideDirection, setHeroSlideDirection] = useState(1);
 
   useEffect(() => {
     const slideTimer = window.setInterval(() => {
-      setHeroSlideDirection(1);
       setActiveHeroSlide((current) => (current + 1) % heroSlides.length);
     }, 6000);
 
@@ -302,17 +268,15 @@ export default function HomePage({
   const shownProducts = visibleProducts.slice(0, 5);
 
   function selectHeroSlide(nextIndex) {
-    const forwardDistance = (nextIndex - activeHeroSlide + heroSlides.length) % heroSlides.length;
-    setHeroSlideDirection(forwardDistance === 0 || forwardDistance <= heroSlides.length / 2 ? 1 : -1);
     setActiveHeroSlide(nextIndex);
   }
 
   return (
     <>
-      {/* Hero carousel: displays the four campaign slide layouts. */}
+      {/* Hero carousel */}
       <section
         id="home"
-        className="relative isolate h-[min(690px,70vw)] min-h-[490px] overflow-hidden bg-neutral-900 text-white max-[900px]:h-[65vw] max-[900px]:min-h-[510px] max-[650px]:h-[min(76svh,680px)] max-[650px]:min-h-[520px] max-[650px]:max-h-[680px]"
+        className="relative isolate h-[min(690px,70vw,85svh)] min-h-[min(490px,85svh)] overflow-hidden bg-neutral-900 text-white max-[900px]:h-[min(65vw,85svh)] max-[900px]:min-h-[min(510px,85svh)] max-[650px]:h-[min(76svh,680px)] max-[650px]:min-h-[min(520px,85svh)] max-[650px]:max-h-[85svh]"
         aria-roledescription="carousel"
         aria-label="Kyreons campaign slides"
       >
@@ -320,11 +284,7 @@ export default function HomePage({
           const isActive = index === activeHeroSlide;
           const isNext = (index - activeHeroSlide + heroSlides.length) % heroSlides.length === 1;
           const isPrevious = (activeHeroSlide - index + heroSlides.length) % heroSlides.length === 1;
-          const offscreenDirection = isNext
-            ? (heroSlideDirection > 0 ? 1 : -1)
-            : isPrevious
-              ? (heroSlideDirection > 0 ? -1 : 1)
-              : 1;
+          const offscreenDirection = isPrevious ? -1 : 1;
           const slideStyle = {
             transform: isActive
               ? 'translate3d(0, 0, 0)'
@@ -349,7 +309,7 @@ export default function HomePage({
         })}
 
         <div className="absolute bottom-5 left-[7%] right-[7%] z-20 flex justify-between text-[7px] tracking-[.1em] text-white/80 md:left-[5.2%] md:right-[5.2%] md:text-[9px]">
-          <span>{String(activeHeroSlide + 1).padStart(3, '0')} / 004</span>
+          <span>{String(activeHeroSlide + 1).padStart(3, '0')} / {String(heroSlides.length).padStart(3, '0')}</span>
           <span>DESIGNED FOR EVERYWHERE.</span>
         </div>
 
