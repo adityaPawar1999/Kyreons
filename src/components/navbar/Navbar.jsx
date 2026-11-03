@@ -43,7 +43,7 @@ export default function Navbar({ dark, onTheme, onCart, onCategory, onWishlist, 
     <header className="site-header"><div className="nav-inner">
       <IconButton className="mobile-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={menuOpen}>{menuOpen ? <CloseIcon /> : <MenuIcon />}</IconButton>
       <BrandLogo onClick={closeMenu} />
-      <nav className={`absolute left-0 right-0 top-[105px] z-40 grid origin-top gap-1 border-b border-neutral-200 bg-paper/95 px-5 pb-5 pt-3 shadow-xl backdrop-blur-xl dark:border-neutral-700 dark:bg-neutral-900/95 md:static md:col-start-2 md:row-start-1 md:flex md:items-center md:justify-center md:gap-5 md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none lg:gap-7 ${menuOpen ? 'grid' : 'hidden md:flex'}`} aria-label="Main navigation">
+      <nav className={`absolute left-0 right-0 top-[105px] z-40 grid origin-top gap-1 border-b border-neutral-200 bg-paper/95 px-5 pb-5 pt-3 shadow-xl backdrop-blur-xl dark:border-neutral-700 md:static md:col-start-2 md:row-start-1 md:flex md:items-center md:justify-center md:gap-5 md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none lg:gap-7 ${menuOpen ? 'grid' : 'hidden md:flex'}`} aria-label="Main navigation">
         {navItems.map((item) => (
           <a
             key={item.label}

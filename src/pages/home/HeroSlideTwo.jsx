@@ -1,5 +1,5 @@
-import heroImage from './h2.png';
-import heroSecondaryImage from './h1.png';
+import heroImage from './h2.jpeg';
+import heroSecondaryImage from './h1.jpeg';
 
 const heroSlideTwo = {
   layout: 'split-images',

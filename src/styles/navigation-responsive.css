@@ -41,6 +41,11 @@ video {
 @media(max-width:650px){
   .site-header{height:108px}
   .nav-inner{position:relative;height:62px}
+  .mobile-menu{flex:none;margin-right:0}
+  .brand-logo{position:static;flex:none;gap:5px;transform:none}
+  .wordmark{position:static;left:auto;transform:none;font-size:21px}
+  .nav-actions{flex:none;gap:6px;margin-left:auto}
+  .nav-actions>.icon-button,.nav-actions>.relative>.icon-button{width:28px}
   .navbar-search{position:absolute;top:66px;left:19px;right:19px;width:auto}
   .main-nav{top:105px}
   .shop-search{max-width:none}

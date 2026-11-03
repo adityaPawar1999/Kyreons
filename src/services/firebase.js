@@ -174,6 +174,45 @@ export async function getSignedInAccount() {
   return user && !user.isAnonymous ? user : null;
 }
 
+export async function getProductReviews(productId) {
+  const { db: firestore } = getFirebase();
+  const snapshot = await getDocs(collection(firestore, 'review', String(productId), 'reviews'));
+  return snapshot.docs
+    .map((reviewDoc) => ({ id: reviewDoc.id, ...reviewDoc.data() }))
+    .sort((a, b) => {
+      const aTime = a.createdAt?.toMillis?.() ?? Date.parse(a.date || '') ?? 0;
+      const bTime = b.createdAt?.toMillis?.() ?? Date.parse(b.date || '') ?? 0;
+      return bTime - aTime;
+    });
+}
+
+export async function addProductReview(productId, { rating, comment = '' }) {
+  const { db: firestore } = getFirebase();
+  const user = await getSignedInAccount();
+  if (!user) throw new Error('Please log in to leave a review.');
+
+  let profile = null;
+  try {
+    profile = await getCustomerProfile(user.uid, user.email);
+  } catch {
+    // The account name and email remain valid fallbacks if the profile is unavailable.
+  }
+  const fullName = [profile?.firstName, profile?.lastName].filter(Boolean).join(' ').trim();
+  const name = fullName || profile?.name || user.displayName || user.email?.split('@')[0] || 'Customer';
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  const ref = await addDoc(collection(firestore, 'review', String(productId), 'reviews'), {
+    userId: user.uid,
+    name: String(name).slice(0, 80),
+    rating: Number(rating),
+    comment: String(comment).trim(),
+    date: today,
+    createdAt: serverTimestamp(),
+  });
+  return { id: ref.id, userId: user.uid, name, rating: Number(rating), comment: String(comment).trim(), date: today };
+}
+
 function getWishlistDocumentId(email, uid) {
   return uid;
 }

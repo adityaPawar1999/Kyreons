@@ -1,4 +1,4 @@
-import heroImage from './h5.png';
+import heroImage from './h5.jpeg';
 
 const heroSlideThree = {
   layout: 'editorial-panel',

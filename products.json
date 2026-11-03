@@ -620,5 +620,62 @@
     "/young-life-on-tee/YLT3.jpeg",
     "/young-life-on-tee/YLT4.jpeg"
   ]
+},
+{
+  "id": "kyreons-bloom-oversized-tee",
+  "name": "Kyreos Bloom Oversized Tee",
+  "category": "t-shirts",
+  "tags": [
+    "oversized",
+    "floral",
+    "bloom",
+    "botanical-art",
+    "blue-floral",
+    "black-t-shirt",
+    "minimal-streetwear",
+    "nature-inspired"
+  ],
+  "badge": "BLOOM IN MOTION",
+  "price": 1299,
+  "description": "Express your individuality with the KYREONS Bloom Oversized Tee. Designed on a classic black base, this T-shirt combines delicate blue floral illustrations with bold artistic typography. The back features a beautiful arrangement of blue and white blooming flowers with botanical branches, complemented by oversized typography reading 'BLOOM' and the phrase 'YOU'RE PLANTED'. The artwork also includes subtle editorial details and the message 'FRESH START', creating a contemporary botanical aesthetic. The front features a minimal floral Bloom graphic on the chest, keeping the design understated while maintaining its identity. Finished with the signature KYREONS collar label and 'Never Just Ordinary' branding, this piece brings nature-inspired art into modern streetwear.",
+  "details": [
+    "Premium oversized fit with a relaxed silhouette",
+    "Classic deep black base color",
+    "Large botanical floral artwork on the back",
+    "Blue and white blooming flower illustrations",
+    "Detailed botanical branches and leaves",
+    "Bold BLOOM typography on the back",
+    "YOU'RE PLANTED signature text",
+    "FRESH START editorial typography",
+    "Minimal floral Bloom graphic on the front chest",
+    "White and blue floral print accents",
+    "Classic ribbed crew neckline",
+    "Dropped shoulders with relaxed wide sleeves",
+    "Black KYREONS signature collar label",
+    "White square K logo on collar label",
+    "KYREONS brand name and NEVER JUST ORDINARY tagline",
+    "Clean sleeve and bottom hem stitching",
+    "Designed for everyday wear and modern streetwear styling"
+  ],
+  "material": "Cotton — confirm fabric composition with supplier",
+  "sizes": [
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL"
+  ],
+  "colors": [
+    {
+      "name": "Classic Black",
+      "hex": "#111111"
+    }
+  ],
+  "images": [
+    "/bloom-oversized-tee/BLM1.jpeg",
+    "/bloom-oversized-tee/BLM2.jpeg",
+    "/bloom-oversized-tee/BLM3.jpeg",
+    "/bloom-oversized-tee/BLM4.jpeg"
+  ]
 }
 ]

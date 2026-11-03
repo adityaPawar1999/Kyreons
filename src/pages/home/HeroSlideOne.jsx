@@ -1,4 +1,4 @@
-import heroImage from './h6.png';
+import heroImage from './h6.jpeg';
 const heroSlideOne = {
 
   layout: 'full-image',
