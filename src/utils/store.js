@@ -1,4 +1,12 @@
-import productData from '../../products.json';
+const productBatchFiles = import.meta.glob('../../productsJS/*.json', { eager: true, import: 'default' });
+const productData = Object.entries(productBatchFiles)
+  .sort(([left], [right]) => left.localeCompare(right, undefined, { numeric: true }))
+  .flatMap(([path, batch]) => {
+    const batchNumber = path.match(/batch[_-](\d+)/i)?.[1] || '1';
+    return Array.isArray(batch)
+      ? batch.map((product) => ({ ...product, __batchName: `Batch-${batchNumber}` }))
+      : [];
+  });
 
 const reviewFiles = import.meta.glob('../../reviews/*.json', { eager: true, import: 'default' });
 const reviewsByProductId = Object.fromEntries(
@@ -10,7 +18,7 @@ const reviewsByProductId = Object.fromEntries(
 
 const imageFallback = '/placeholder.svg';
 
-function normalizeImagePath(path) {
+function normalizeImagePath(path, batchName, product) {
   if (path && typeof path === 'object') path = path.url || path.src || path.path;
   if (typeof path !== 'string' || !path.trim()) return '';
   const value = path.trim().replace(/\\/g, '/');
@@ -18,14 +26,23 @@ function normalizeImagePath(path) {
 
   // Product Images is configured as Vite's public directory, so its contents
   // are served from the site root (for example, /atlas-tee/front.jpg).
-  const relativePath = value
+  let relativePath = value
     .replace(/^\.\//, '')
     .replace(/^\/+/, '')
     .replace(/^Product(?:%20|\s)*Images\//i, '');
+
+  // Catalog batches use older image paths without their new batch directory.
+  // Resolve those paths into the matching public image batch.
+  if (!/^Batch-\d+\//i.test(relativePath)) {
+    const imageBatch = /astronaut-cat/i.test(product?.id || '') ? 'Batch-2' : batchName;
+    relativePath = `${imageBatch}/${relativePath.replace(/^batch-\d+\//i, '')}`;
+  } else {
+    relativePath = relativePath.replace(/^batch-(\d+)\//i, 'Batch-$1/');
+  }
   return `/${relativePath.split('/').map(encodeURIComponent).join('/')}`;
 }
 
-function readProductImages(product) {
+function readProductImages(product, batchName) {
   const imageValue = product.images
     ?? product.productImages
     ?? product.productimages
@@ -39,7 +56,7 @@ function readProductImages(product) {
       : imageValue && typeof imageValue === 'object'
         ? Object.values(imageValue).flat(Infinity)
         : [];
-  const validPaths = paths.map(normalizeImagePath).filter(Boolean);
+  const validPaths = paths.map((path) => normalizeImagePath(path, batchName, product)).filter(Boolean);
   const firstImage = validPaths[0] || imageFallback;
   return Array.from({ length: 4 }, (_, index) => validPaths[index] || firstImage);
 }
@@ -47,7 +64,7 @@ function readProductImages(product) {
 const seenIds = new Set();
 export const products = productData
   .filter((product) => product && typeof product === 'object')
-  .map((product, index) => ({
+  .map(({ __batchName, ...product }, index) => ({
     ...product,
     id: String(product.id || `product-${index + 1}`),
     name: String(product.name || 'Kyreons garment'),
@@ -62,9 +79,10 @@ export const products = productData
     colors: Array.isArray(product.colors) && product.colors.length
       ? product.colors
       : [{ name: 'Default', hex: '#d5d5d0' }],
-    images: readProductImages(product),
+    images: readProductImages(product, __batchName || 'Batch-1'),
     price: Number(product.price) || 0,
     stock: product.stock && typeof product.stock === 'object' ? product.stock : null,
+    batchNumber: Number(__batchName?.match(/\d+/)?.[0]) || 1,
   }))
   .map((product) => ({
     ...product,
@@ -76,6 +94,11 @@ export const products = productData
     if (seenIds.has(product.id)) return false;
     seenIds.add(product.id);
     return true;
+  })
+  .sort((left, right) => {
+    const leftDate = Date.parse(left.postedDate) || 0;
+    const rightDate = Date.parse(right.postedDate) || 0;
+    return rightDate - leftDate;
   });
 
 export function formatMoney(value) {

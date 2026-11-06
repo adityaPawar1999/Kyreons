@@ -5,6 +5,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { formatMoney, products } from '../../utils/store.js';
 import { getCustomerProfile, saveOrder } from '../../services/firebase.js';
+import paymentQr from '../../../QRcode.jpg';
 
 const inputClass = 'w-full border border-neutral-300 bg-transparent px-3 py-3 text-sm text-neutral-900 outline-none transition-colors placeholder:text-neutral-400 focus:border-neutral-900 dark:border-neutral-700 dark:text-white dark:placeholder:text-neutral-500 dark:focus:border-neutral-300';
 
@@ -117,8 +118,14 @@ export default function CheckoutPage({ cart, user, onChangeQuantity, onChangeSiz
             </div>
           </fieldset>
 
+          <section className="border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-900/60">
+            <p className="text-[9px] font-semibold tracking-[.14em] text-neutral-500">PAYMENT METHOD</p>
+            <p className="mt-2 text-sm font-medium text-neutral-900 dark:text-white">UPI by PhonePe QR</p>
+            <p className="mt-1 text-xs leading-5 text-neutral-500">After saving your order, scan the QR code and pay the exact total shown.</p>
+          </section>
+
           {saveError && <p className="text-sm text-rose-700 dark:text-rose-300" role="alert">{saveError}</p>}
-          <button className="inline-flex w-full items-center justify-between gap-4 bg-[#d5ed52] px-5 py-4 text-xs font-bold tracking-[.1em] text-neutral-900 transition-colors hover:bg-[#c4dc42] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 disabled:cursor-wait disabled:opacity-60" type="submit" disabled={saving}><span>{saving ? 'SAVING ORDER…' : 'SAVE ORDER'}</span><ArrowForwardIcon /></button>
+          <button className="inline-flex w-full items-center justify-between gap-4 bg-[#d5ed52] px-5 py-4 text-xs font-bold tracking-[.1em] text-neutral-900 transition-colors hover:bg-[#c4dc42] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 disabled:cursor-wait disabled:opacity-60" type="submit" disabled={saving}><span>{saving ? 'SAVING ORDER…' : 'SAVE ORDER & SHOW PAYMENT QR'}</span><ArrowForwardIcon /></button>
           <p className="flex items-center justify-center gap-2 text-[11px] text-neutral-500"><LockOutlinedIcon fontSize="small" /> Your information is used to prepare your order.</p>
         </form>
       </section>
@@ -156,9 +163,23 @@ function InvoiceOverlay({ invoice, items, subtotal, onClose }) {
       </div>
       <div className="py-6"><h3 className="mb-3 text-[9px] font-semibold tracking-[.12em] text-neutral-500">ORDER DETAILS</h3><ul className="divide-y divide-neutral-300 dark:divide-neutral-700">{items.map(({ key, product, quantity, size, color }) => <li className="flex justify-between gap-4 py-3 text-sm" key={key}><span className="min-w-0 text-neutral-700 dark:text-neutral-200">{product.name}<span className="block pt-1 text-xs text-neutral-500">{color} · Size {size} · Qty {quantity}</span></span><span className="shrink-0 font-medium tabular-nums text-neutral-900 dark:text-white">{formatMoney(product.price * quantity)}</span></li>)}</ul></div>
       <div className="space-y-3 border-t border-neutral-300 pt-5 text-sm dark:border-neutral-700"><div className="flex justify-between text-neutral-600 dark:text-neutral-300"><span>Subtotal</span><span className="tabular-nums">{formatMoney(subtotal)}</span></div><div className="flex justify-between text-neutral-600 dark:text-neutral-300"><span>Shipping</span><span>Complimentary</span></div><div className="flex justify-between border-t border-neutral-300 pt-4 text-base font-semibold text-neutral-900 dark:border-neutral-700 dark:text-white"><span>Total</span><span className="tabular-nums">{formatMoney(subtotal)}</span></div></div>
+      <section className="mt-7 border-t border-neutral-300 pt-6 dark:border-neutral-700">
+        <p className="text-center text-[9px] font-semibold tracking-[.14em] text-neutral-500">PAY WITH UPI</p>
+        <h3 className="mt-2 text-center font-display text-xl font-medium text-neutral-900 dark:text-white">Scan to pay {formatMoney(subtotal)}</h3>
+        <div className="mx-auto mt-4 w-full max-w-[250px] overflow-hidden border border-neutral-300 bg-black dark:border-neutral-700"><img className="block h-auto w-full" src={paymentQr} alt="PhonePe UPI payment QR code for Kyreons order" /></div>
+        <p className="mt-4 text-center text-xs leading-5 text-neutral-600 dark:text-neutral-300">Scan with PhonePe or another UPI app. Confirm the recipient name shown in your payment app before paying.</p>
+        <p className="mt-2 text-center text-[10px] leading-5 text-neutral-500">If your UPI app has a note field, add order {invoice.number}. This order remains pending until payment is verified.</p>
+        <a className="mx-auto mt-4 block w-fit border-b border-neutral-400 pb-1 text-[10px] font-semibold tracking-[.1em] text-neutral-700 dark:text-neutral-200" href={paymentQr} download="kyreons-payment-qr.jpg">DOWNLOAD QR CODE</a>
+      </section>
       <p className="mt-8 border-t border-neutral-300 pt-6 text-center font-display text-2xl text-neutral-900 dark:border-neutral-700 dark:text-white">Thank you for choosing Kyreons.</p>
-      <p className="mt-2 text-center text-xs text-neutral-500">Your order has been saved. Payment setup is needed to complete it.</p>
-      <a className="mt-6 block w-full bg-[#d5ed52] px-5 py-3 text-center text-xs font-bold tracking-[.1em] text-neutral-900" href="#my-orders">VIEW MY ORDERS</a>
+      <p className="mt-2 text-center text-xs text-neutral-500">Your order has been saved. Payment is not automatically verified.</p>
+      <button
+        className="mt-6 block w-full bg-[#d5ed52] px-5 py-4 text-center text-xs font-bold tracking-[.1em] text-neutral-900 transition-colors hover:bg-[#c4dc42] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
+        type="button"
+        onClick={() => { window.location.hash = 'my-orders'; onClose(); }}
+      >
+        SUBMIT
+      </button>
     </section>
   </div>;
 }

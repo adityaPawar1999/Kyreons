@@ -1,48 +1,120 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+
+    function validOrderStatus(status) {
+      return status in [
+        'pending_payment', 'order_received', 'payment_received', 'in_progress',
+        'dispatched', 'delivered', 'return_requested', 'return_in_progress',
+        'returned', 'cancelled'
+      ];
+    }
+
     match /orders/{orderId} {
       allow create: if request.auth != null
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.status == 'pending_payment'
         && request.resource.data.keys().hasOnly([
-          'userId', 'email', 'orderNumber', 'customer', 'items', 'subtotal', 'total',
-          'currency', 'status', 'createdAt'
-        ])
-        && request.resource.data.email is string;
+          'userId', 'email', 'orderNumber', 'customer', 'items', 'subtotal',
+          'total', 'currency', 'status', 'createdAt'
+        ]);
+
       allow get, list: if request.auth != null
-        && resource.data.userId == request.auth.uid;
-      allow update, delete: if false;
+        && (resource.data.userId == request.auth.uid || isAdmin());
+
+      // Only dashboard admins can change the fulfilment and payment tracking
+      // fields. Customers cannot edit orders after checkout.
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status', 'paymentStatus', 'currentCity', 'estimatedDeliveryAt',
+          'returnEstimatedAt', 'statusUpdatedAt'
+        ])
+        && validOrderStatus(request.resource.data.status)
+        && request.resource.data.paymentStatus in ['pending', 'received', 'failed', 'refunded']
+        && request.resource.data.currentCity is string
+        && request.resource.data.currentCity.size() <= 100
+        && request.resource.data.estimatedDeliveryAt is string
+        && request.resource.data.returnEstimatedAt is string
+        && request.resource.data.statusUpdatedAt == request.time;
+
+      allow delete: if false;
     }
 
     match /newsletterSubscribers/{subscriberId} {
       allow create, update: if request.resource.data.email == subscriberId
-        && request.resource.data.keys().hasOnly(['email', 'createdAt'])
-        && request.resource.data.email is string;
+        && request.resource.data.email is string
+        && request.resource.data.keys().hasOnly(['email', 'createdAt']);
+
       allow read, delete: if false;
     }
 
-    match /customerProfiles/{emailId} {
+    match /customerProfiles/{userId} {
       allow get: if request.auth != null
-        && request.auth.uid == emailId;
+        && (request.auth.uid == userId || isAdmin());
+
+      allow list: if isAdmin();
+
       allow create, update: if request.auth != null
-        && request.auth.uid == emailId
+        && request.auth.uid == userId
         && request.resource.data.keys().hasOnly([
           'name', 'firstName', 'lastName', 'phone', 'address', 'address2',
           'city', 'region', 'postalCode', 'country', 'email', 'cart', 'updatedAt'
         ])
-        && (!('cart' in request.resource.data) || request.resource.data.cart is list);
-      allow list, delete: if false;
+        && (!('cart' in request.resource.data)
+          || request.resource.data.cart is list);
+
+      allow delete: if false;
     }
 
-    match /customerWishlists/{emailId} {
+    match /customerWishlists/{userId} {
       allow get: if request.auth != null
-        && request.auth.uid == emailId;
+        && request.auth.uid == userId;
+
       allow create, update: if request.auth != null
-        && request.auth.uid == emailId
+        && request.auth.uid == userId
         && request.resource.data.keys().hasOnly(['productIds', 'updatedAt'])
         && request.resource.data.productIds is list;
-      allow list, delete: if false;
+
+      allow list: if isAdmin();
+      allow delete: if false;
+    }
+
+    // Admins need a collection-group query to aggregate ratings across products.
+    match /{reviewPath=**}/reviews/{reviewId} {
+      allow get, list: if isAdmin();
+    }
+
+    match /review/{productId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+
+      match /reviews/{reviewId} {
+        allow get, list: if true;
+
+        allow create: if request.auth != null
+          && request.resource.data.userId == request.auth.uid
+          && request.resource.data.keys().hasOnly([
+            'userId', 'name', 'rating', 'comment', 'date', 'createdAt'
+          ])
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.name.size() <= 80
+          && request.resource.data.rating is int
+          && request.resource.data.rating >= 1
+          && request.resource.data.rating <= 5
+          && request.resource.data.comment is string
+          && (request.resource.data.comment.size() == 0
+            || request.resource.data.comment.size() >= 3)
+          && request.resource.data.comment.size() <= 1000
+          && request.resource.data.date is string
+          && request.resource.data.createdAt == request.time;
+
+        allow update, delete: if false;
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth, signInAnonymously, onAuthStateChanged, EmailAuthProvider, linkWithCredential, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from 'firebase/auth';
-import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, query, where, runTransaction, serverTimestamp, deleteField } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, onSnapshot, query, where, runTransaction, serverTimestamp, deleteField } from 'firebase/firestore';
 
 const config = {
    apiKey: "AIzaSyBRJKc3Hzv_m9CgBZ7fg2jHVE9Hqdsn7Rk",
@@ -66,6 +66,26 @@ export async function getMyOrders() {
   const ordersQuery = query(collection(firestore, 'orders'), where('userId', '==', customer.uid));
   const snapshot = await getDocs(ordersQuery);
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+}
+
+export function watchMyOrders(onOrders, onError) {
+  let active = true;
+  let unsubscribe = () => {};
+  getCustomer()
+    .then((customer) => {
+      if (!active) return;
+      const ordersQuery = query(collection(db, 'orders'), where('userId', '==', customer.uid));
+      unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
+        const orders = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }))
+          .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        onOrders(orders);
+      }, onError);
+    })
+    .catch(onError);
+  return () => {
+    active = false;
+    unsubscribe();
+  };
 }
 
 export function watchAuthUser(callback) {
