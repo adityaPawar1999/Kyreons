@@ -35,12 +35,13 @@ const policies = {
   },
   privacy: {
     title: 'Privacy policy',
-    intro: 'Order details are stored securely in Firebase and linked to an anonymous customer ID saved by your browser.',
+    intro: 'Kyreons stores the information needed to manage orders, customer requests, and storefront activity.',
     sections: [
       ['Data stored in your browser', 'Your cart, wishlist, and theme preference are saved in local browser storage so they remain available on your device.'],
       ['Checkout and orders', 'When you save an order, your name, contact details, delivery address, and item details are saved in Firebase Firestore. Your order history is tied to an anonymous browser identity, so it is available from the same browser profile.'],
       ['Customer profile', 'If you create an account and save your profile, your name, phone number, and delivery address are stored in Firebase Firestore and available when you log in.'],
-      ['Contact and newsletter', 'The contact form prepares a message in your email application. Newsletter email addresses are stored separately in the Firebase Firestore newsletterSubscribers collection and are not readable from the storefront. Newsletter signup does not require an account.'],
+      ['Contact and newsletter', 'Contact form submissions, including your name, email address, topic, optional order number, and message, are stored in Firebase Firestore so the Kyreons team can respond. Newsletter email addresses are stored separately in the Firebase Firestore newsletterSubscribers collection and are not readable from the storefront. Neither form requires an account.'],
+      ['Storefront activity', 'We record storefront visits, page views, product views, and approximate visit duration in Firebase Firestore to understand how the store is used. Visitors who are not signed in are represented by a Firebase anonymous identifier. We do not store IP addresses in these activity records.'],
       ['Questions or requests', 'For privacy questions or requests about information you sent to Kyreons, email kyreons.studio@gmail.com.'],
     ],
   },

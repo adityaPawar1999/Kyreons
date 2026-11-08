@@ -31,7 +31,7 @@ service cloud.firestore {
       allow update: if isAdmin()
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
           'status', 'paymentStatus', 'currentCity', 'estimatedDeliveryAt',
-          'returnEstimatedAt', 'statusUpdatedAt'
+          'returnEstimatedAt', 'statusUpdatedAt', 'orderReceivedAt'
         ])
         && validOrderStatus(request.resource.data.status)
         && request.resource.data.paymentStatus in ['pending', 'received', 'failed', 'refunded']
@@ -39,7 +39,9 @@ service cloud.firestore {
         && request.resource.data.currentCity.size() <= 100
         && request.resource.data.estimatedDeliveryAt is string
         && request.resource.data.returnEstimatedAt is string
-        && request.resource.data.statusUpdatedAt == request.time;
+        && request.resource.data.statusUpdatedAt == request.time
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['orderReceivedAt'])
+          || request.resource.data.orderReceivedAt == request.time);
 
       allow delete: if false;
     }
@@ -50,6 +52,34 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['email', 'createdAt']);
 
       allow read, delete: if false;
+    }
+
+    match /contactMessages/{messageId} {
+      allow create: if request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 100
+        && request.resource.data.email is string
+        && request.resource.data.email.size() >= 6
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.topic is string
+        && request.resource.data.topic.size() > 0
+        && request.resource.data.topic.size() <= 80
+        && request.resource.data.orderNumber is string
+        && request.resource.data.orderNumber.size() <= 40
+        && request.resource.data.message is string
+        && request.resource.data.message.size() >= 5
+        && request.resource.data.message.size() <= 3000
+        && request.resource.data.status == 'new'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.keys().hasOnly([
+          'name', 'email', 'topic', 'orderNumber', 'message', 'status', 'createdAt'
+        ]);
+
+      allow get, list: if isAdmin();
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        && request.resource.data.status in ['new', 'in_progress', 'handled'];
+      allow delete: if false;
     }
 
     match /customerProfiles/{userId} {
@@ -81,6 +111,51 @@ service cloud.firestore {
 
       allow list: if isAdmin();
       allow delete: if false;
+    }
+
+    match /storefrontSessions/{sessionId} {
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.visitorType in ['anonymous', 'customer']
+        && request.resource.data.startedAt == request.time
+        && request.resource.data.lastSeenAt == request.time
+        && request.resource.data.durationSeconds == 0
+        && request.resource.data.pageViews == 0
+        && request.resource.data.lastRoute is string
+        && request.resource.data.lastRoute.size() <= 160
+        && request.resource.data.keys().hasOnly(['userId', 'visitorType', 'startedAt', 'lastSeenAt', 'durationSeconds', 'pageViews', 'lastRoute']);
+
+      allow update: if request.auth != null
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastSeenAt', 'durationSeconds', 'pageViews', 'lastRoute'])
+        && request.resource.data.lastSeenAt == request.time
+        && request.resource.data.durationSeconds is int
+        && request.resource.data.durationSeconds >= resource.data.durationSeconds
+        && request.resource.data.pageViews is int
+        && request.resource.data.pageViews >= resource.data.pageViews
+        && request.resource.data.lastRoute is string
+        && request.resource.data.lastRoute.size() <= 160;
+
+      allow get, list: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /storefrontEvents/{eventId} {
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.visitorType in ['anonymous', 'customer']
+        && request.resource.data.type in ['page_view', 'product_view']
+        && request.resource.data.sessionId is string
+        && request.resource.data.route is string
+        && request.resource.data.route.size() <= 160
+        && request.resource.data.productId is string
+        && request.resource.data.productId.size() <= 100
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.keys().hasOnly(['sessionId', 'userId', 'visitorType', 'type', 'route', 'productId', 'createdAt']);
+
+      allow get, list: if isAdmin();
+      allow update, delete: if false;
     }
 
     // Admins need a collection-group query to aggregate ratings across products.

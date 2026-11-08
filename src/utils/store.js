@@ -81,7 +81,6 @@ export const products = productData
       : [{ name: 'Default', hex: '#d5d5d0' }],
     images: readProductImages(product, __batchName || 'Batch-1'),
     price: Number(product.price) || 0,
-    stock: product.stock && typeof product.stock === 'object' ? product.stock : null,
     batchNumber: Number(__batchName?.match(/\d+/)?.[0]) || 1,
   }))
   .map((product) => ({

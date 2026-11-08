@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useStoredCart from './useStoredCart.js';
 import { products } from '../utils/store.js';
 import { normalizeCart } from '../utils/cart.js';
-import { getCustomerCart, getCustomerProfile, getCustomerWishlist, getSignedInAccount, saveCustomerCart, toggleCustomerWishlist, watchAuthUser } from '../services/firebase.js';
+import { getCustomerCart, getCustomerProfile, getCustomerWishlist, getSignedInAccount, recordStorefrontPageView, saveCustomerCart, startStorefrontSession, toggleCustomerWishlist, updateStorefrontSession, watchAuthUser } from '../services/firebase.js';
 
 const THEME_KEY = 'kyreons-theme-v1';
 
@@ -23,6 +23,7 @@ export default function useStorefront() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [route, setRoute] = useState(getRouteFromHash);
   const [toast, setToast] = useState('');
+  const visitRef = useRef(null);
   const isSignedIn = authReady && Boolean(accountUser && !accountUser.isAnonymous);
   const cartCount = isSignedIn ? cart.reduce((sum, item) => sum + item.quantity, 0) : 0;
   const productRoute = route.startsWith('product/') ? route.split('/')[1] : null;
@@ -45,6 +46,43 @@ export default function useStorefront() {
       return () => { active = false; };
     }
   }, []);
+
+  useEffect(() => {
+    if (!authReady || !accountUser) return undefined;
+    let active = true;
+    let heartbeat;
+    const visitedAt = Date.now();
+    const recordView = async () => {
+      try {
+        let visit = visitRef.current;
+        if (!visit || visit.userId !== accountUser.uid) {
+          const sessionId = await startStorefrontSession(accountUser, route);
+          if (!active || !sessionId) return;
+          visit = { sessionId, userId: accountUser.uid, startedAt: Date.now() };
+          visitRef.current = visit;
+        }
+        await recordStorefrontPageView(visit.sessionId, accountUser, route);
+        if (!active) return;
+        heartbeat = window.setInterval(() => {
+          const durationSeconds = Math.floor((Date.now() - visit.startedAt) / 1000);
+          updateStorefrontSession(visit.sessionId, accountUser, durationSeconds)
+            .catch((error) => console.warn('Could not update visit duration:', error));
+        }, 30000);
+      } catch (error) {
+        console.warn('Could not record storefront activity:', error);
+      }
+    };
+    recordView();
+    return () => {
+      active = false;
+      window.clearInterval(heartbeat);
+      const visit = visitRef.current;
+      if (visit?.userId === accountUser.uid) {
+        updateStorefrontSession(visit.sessionId, accountUser, Math.floor((Date.now() - visit.startedAt) / 1000))
+          .catch((error) => console.warn('Could not save visit duration:', error));
+      }
+    };
+  }, [accountUser, authReady, route]);
 
   useEffect(() => {
     if (!authReady || !accountUser || accountUser.isAnonymous) {

@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth, signInAnonymously, onAuthStateChanged, EmailAuthProvider, linkWithCredential, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from 'firebase/auth';
-import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, onSnapshot, query, where, runTransaction, serverTimestamp, deleteField } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, onSnapshot, query, where, runTransaction, serverTimestamp, deleteField, increment } from 'firebase/firestore';
 
 const config = {
    apiKey: "AIzaSyBRJKc3Hzv_m9CgBZ7fg2jHVE9Hqdsn7Rk",
@@ -18,6 +18,7 @@ export const isFirebaseConfigured = requiredConfig.every((key) => Boolean(config
 let auth;
 let db;
 let authPersistence;
+let anonymousSignInPromise;
 function getFirebase() {
   if (!isFirebaseConfigured) throw new Error('Firebase is not configured. Add the VITE_FIREBASE_* values to your environment.');
   const app = getApps()[0] || initializeApp(config);
@@ -36,7 +37,11 @@ async function getCustomer() {
   const { auth: firebaseAuth } = getFirebase();
   await ensureLocalAuthPersistence();
   await firebaseAuth.authStateReady();
-  return firebaseAuth.currentUser || (await signInAnonymously(firebaseAuth)).user;
+  if (firebaseAuth.currentUser) return firebaseAuth.currentUser;
+  anonymousSignInPromise ||= signInAnonymously(firebaseAuth).then(({ user }) => user).finally(() => {
+    anonymousSignInPromise = null;
+  });
+  return anonymousSignInPromise;
 }
 
 export async function saveOrder(order) {
@@ -58,6 +63,20 @@ export async function saveNewsletterEmail(email) {
     email: normalizedEmail,
     createdAt: serverTimestamp(),
   });
+}
+
+export async function sendContactMessage(message) {
+  const { db: firestore } = getFirebase();
+  const ref = await addDoc(collection(firestore, 'contactMessages'), {
+    name: String(message.name || '').trim().slice(0, 100),
+    email: String(message.email || '').trim().toLowerCase().slice(0, 254),
+    topic: String(message.topic || 'Something else').trim().slice(0, 80),
+    orderNumber: String(message.orderNumber || '').trim().slice(0, 40),
+    message: String(message.message || '').trim().slice(0, 3000),
+    status: 'new',
+    createdAt: serverTimestamp(),
+  });
+  return ref.id;
 }
 
 export async function getMyOrders() {
@@ -94,7 +113,29 @@ export function watchAuthUser(callback) {
   let unsubscribe = () => {};
   ensureLocalAuthPersistence()
     .then(() => {
-      if (active) unsubscribe = onAuthStateChanged(firebaseAuth, callback);
+      if (!active) return;
+      const ready = firebaseAuth.authStateReady().then(() => getCustomer());
+      ready.then(() => {
+        if (!active) return;
+        unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
+          if (user) {
+            callback(user);
+            return;
+          }
+          getCustomer().then((anonymousUser) => {
+            if (active) callback(anonymousUser);
+          }).catch((error) => {
+            if (!active) return;
+            console.error('Could not restore anonymous visitor tracking after sign-out. Check that Anonymous sign-in is enabled and the storefront Firestore rules are published.', error);
+            callback(null);
+          });
+        });
+      }).catch((error) => {
+        if (active) {
+          console.error('Could not start anonymous visitor tracking. Check that Anonymous sign-in is enabled in Firebase Authentication and that the storefront Firestore rules are published.', error);
+          callback(null);
+        }
+      });
     })
     .catch((error) => {
       if (active) console.error('Could not enable persistent sign-in:', error);
@@ -103,6 +144,53 @@ export function watchAuthUser(callback) {
     active = false;
     unsubscribe();
   };
+}
+
+export async function startStorefrontSession(user, route) {
+  if (!user?.uid) return null;
+  const { db: firestore } = getFirebase();
+  const sessionRef = await addDoc(collection(firestore, 'storefrontSessions'), {
+    userId: user.uid,
+    visitorType: user.isAnonymous ? 'anonymous' : 'customer',
+    startedAt: serverTimestamp(),
+    lastSeenAt: serverTimestamp(),
+    durationSeconds: 0,
+    pageViews: 0,
+    lastRoute: String(route || 'home').slice(0, 160),
+  });
+  return sessionRef.id;
+}
+
+export async function recordStorefrontPageView(sessionId, user, route) {
+  if (!sessionId || !user?.uid) return;
+  const { db: firestore } = getFirebase();
+  const path = String(route || 'home').slice(0, 160);
+  const productId = path.startsWith('product/') ? path.slice('product/'.length).split('/')[0].slice(0, 100) : '';
+  await Promise.all([
+    addDoc(collection(firestore, 'storefrontEvents'), {
+      sessionId,
+      userId: user.uid,
+      visitorType: user.isAnonymous ? 'anonymous' : 'customer',
+      type: productId ? 'product_view' : 'page_view',
+      route: path,
+      productId,
+      createdAt: serverTimestamp(),
+    }),
+    setDoc(doc(firestore, 'storefrontSessions', sessionId), {
+      lastSeenAt: serverTimestamp(),
+      lastRoute: path,
+      pageViews: increment(1),
+    }, { merge: true }),
+  ]);
+}
+
+export async function updateStorefrontSession(sessionId, user, durationSeconds) {
+  if (!sessionId || !user?.uid) return;
+  const { db: firestore } = getFirebase();
+  await setDoc(doc(firestore, 'storefrontSessions', sessionId), {
+    lastSeenAt: serverTimestamp(),
+    durationSeconds: Math.max(0, Math.floor(durationSeconds)),
+  }, { merge: true });
 }
 
 export async function createAccount(email, password) {
