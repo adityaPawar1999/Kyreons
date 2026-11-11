@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth, signInAnonymously, onAuthStateChanged, EmailAuthProvider, linkWithCredential, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from 'firebase/auth';
+import { getAuth, signInAnonymously, onIdTokenChanged, EmailAuthProvider, GoogleAuthProvider, linkWithCredential, linkWithPopup, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, onSnapshot, query, where, runTransaction, serverTimestamp, deleteField, increment } from 'firebase/firestore';
 
 const config = {
@@ -117,7 +117,10 @@ export function watchAuthUser(callback) {
       const ready = firebaseAuth.authStateReady().then(() => getCustomer());
       ready.then(() => {
         if (!active) return;
-        unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
+        // Linking a credential to the current anonymous user keeps the same UID,
+        // so onAuthStateChanged may not fire even though isAnonymous changed.
+        // onIdTokenChanged covers both account switches and anonymous upgrades.
+        unsubscribe = onIdTokenChanged(firebaseAuth, (user) => {
           if (user) {
             callback(user);
             return;
@@ -209,6 +212,23 @@ export async function loginAccount(email, password) {
   await ensureLocalAuthPersistence();
   await firebaseAuth.authStateReady();
   return (await signInWithEmailAndPassword(firebaseAuth, email.trim(), password)).user;
+}
+
+export async function loginWithGoogle() {
+  const { auth: firebaseAuth } = getFirebase();
+  await ensureLocalAuthPersistence();
+  await firebaseAuth.authStateReady();
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+  if (firebaseAuth.currentUser?.isAnonymous) {
+    try {
+      return (await linkWithPopup(firebaseAuth.currentUser, provider)).user;
+    } catch (error) {
+      // If this Google account already exists, sign into that account instead.
+      if (error.code !== 'auth/credential-already-in-use') throw error;
+    }
+  }
+  return (await signInWithPopup(firebaseAuth, provider)).user;
 }
 
 export async function logoutAccount() {

@@ -39,6 +39,7 @@ video {
 .bottom-search-bar{display:none}
 .mobile-theme-toggle{display:none}
 @media(max-width:650px){
+  .login-screen{padding-bottom:0}
   .site-header{height:108px}
   .nav-inner{position:relative;height:62px}
   .mobile-menu{flex:none;margin-right:0}

@@ -37,7 +37,7 @@ Pages are in `src/pages/`; reusable navigation, product, cart, layout, and butto
 Order checkout writes customer contact and delivery details, item snapshots, totals, and a `pending_payment` status to the Firestore `orders` collection. The browser signs in anonymously with Firebase Auth and the order is associated with that anonymous user ID. Customers can see their saved orders from **My orders** in the footer, in the same browser profile. Clearing browser data or switching devices loses access to that anonymous identity; add a permanent sign-in flow before offering cross-device order history.
 
 1. Create a Firebase project and register a web app. Copy its web app configuration into a local `.env` using the variable names in `.env.example`.
-2. In Firebase Console, enable **Authentication > Sign-in method > Email/Password** (for customer accounts) and **Anonymous** (for guest order identity), and create a **Cloud Firestore** database.
+2. In Firebase Console, enable **Authentication > Sign-in method > Google**, **Email/Password** (for customer accounts), and **Anonymous** (for guest order identity). Add your storefront host to Authentication's authorized domains, and create a **Cloud Firestore** database.
 3. Publish the rules from `firestore.rules` in the Firestore Rules tab.
 4. Add the same `VITE_FIREBASE_*` variables to your hosting provider and redeploy.
 

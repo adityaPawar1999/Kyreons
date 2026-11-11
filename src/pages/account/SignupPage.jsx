@@ -40,6 +40,7 @@ export default function SignupPage() {
 
     setBusy(true);
     setError('');
+    sessionStorage.setItem('kyreons-signup-in-progress', 'true');
     try {
       const user = createdUser || await createAccount(form.get('email'), form.get('password'));
       if (!createdUser) setCreatedUser(user);
@@ -58,15 +59,17 @@ export default function SignupPage() {
         country: form.get('country'),
       };
       await saveCustomerProfile(user.uid, profile, user.email || '');
+      sessionStorage.removeItem('kyreons-signup-in-progress');
       location.hash = 'account/profile';
     } catch (authError) {
+      sessionStorage.removeItem('kyreons-signup-in-progress');
       setError(getSignupErrorMessage(authError));
     } finally {
       setBusy(false);
     }
   }
 
-  return <section className="mt-7 max-w-2xl border border-neutral-200 bg-[var(--bg)] p-5 dark:border-neutral-800 sm:p-8">
+  return <section className="mt-4 max-w-2xl border border-neutral-200 bg-[var(--bg)] p-4 dark:border-neutral-800 sm:mt-5 sm:p-6">
     <h2 className="font-display text-2xl text-neutral-900 dark:text-white">Create your account.</h2>
     <p className="mt-2 text-xs leading-5 text-neutral-500">Your contact and delivery details will be ready for your next order.</p>
     {error && <p className="mt-5 text-sm text-rose-700 dark:text-rose-300" role="alert">{error}</p>}

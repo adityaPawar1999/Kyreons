@@ -20,6 +20,7 @@ import { logoutAccount, saveCustomerCart } from '../../services/firebase.js';
 
 export default function StorefrontLayout({ store }) {
   const { cart, setCart, cartCount, dark, setDark, drawerOpen, setDrawerOpen, menuOpen, setMenuOpen, route, productRoute, currentProduct, toast, openProduct, navigateCategory, quickAdd, addToBag, changeQuantity, changeSize, wishlist, toggleWishlist, isSignedIn, authReady, accountUser, accountFirstName } = store;
+  const isLoginRoute = route === 'account/login';
   const [searchQuery, setSearchQuery] = useState('');
   const updateSearchQuery = (value) => {
     setSearchQuery(value);
@@ -32,6 +33,7 @@ export default function StorefrontLayout({ store }) {
       try { await saveCustomerCart(accountUser.uid, accountUser.email, cart); }
       catch { cartSaveFailed = true; }
       await logoutAccount();
+      sessionStorage.removeItem('kyreons-show-welcome');
       if (cartSaveFailed) window.dispatchEvent(new CustomEvent('kyreons:toast', { detail: 'Logged out, but your cart could not be synced.' }));
       location.hash = 'account/login';
     } catch (error) {
@@ -40,14 +42,14 @@ export default function StorefrontLayout({ store }) {
     }
   };
 
-  return <div className="storefront">
+  return <div className={`storefront${isLoginRoute ? ' login-screen' : ''}`}>
     <Navbar dark={dark} onTheme={() => setDark((value) => !value)} onCart={() => setDrawerOpen(true)} onWishlist={() => { location.hash = 'wishlist'; setMenuOpen(false); }} onLogout={logoutFromNavbar} isSignedIn={isSignedIn} firstName={accountFirstName} onCategory={navigateCategory} wishlistCount={wishlist.length} cartCount={cartCount} menuOpen={menuOpen} setMenuOpen={setMenuOpen} route={route} searchQuery={searchQuery} onSearchQueryChange={updateSearchQuery} onSearchFocus={focusSearchResults} />
     <main>{currentProduct
       ? <ProductPage key={currentProduct.id} product={currentProduct} onQuickAdd={quickAdd} onOpen={openProduct} onBag={addToBag} wishlist={wishlist} onToggleWishlist={toggleWishlist} isSignedIn={isSignedIn} />
       : productRoute
         ? <NotFoundPage />
         : route === 'account' || route.startsWith('account/')
-          ? <AccountPage mode={route.split('/')[1] || 'home'} cart={cart} />
+          ? <AccountPage mode={route.split('/')[1] || 'home'} cart={cart} user={accountUser} authReady={authReady} />
         : route === 'contact'
           ? <ContactPage />
           : route.startsWith('policy/')
@@ -81,7 +83,7 @@ export default function StorefrontLayout({ store }) {
                 ? <HomePage onOpen={openProduct} onQuickAdd={quickAdd} wishlist={wishlist} onToggleWishlist={toggleWishlist} searchQuery={searchQuery} onSearchQueryChange={(value) => { setSearchQuery(value); if (!value.trim()) setSearchQuery(''); }} onSearchFocus={focusSearchResults} />
                 : <NotFoundPage />}</main>
     <SiteFooter />
-    <div className="bottom-search-bar"><ProductSearchInput value={searchQuery} onChange={updateSearchQuery} onFocus={focusSearchResults} /></div>
+    {!isLoginRoute && <div className="bottom-search-bar"><ProductSearchInput value={searchQuery} onChange={updateSearchQuery} onFocus={focusSearchResults} /></div>}
     <CartDrawer open={drawerOpen} cart={cart} isSignedIn={isSignedIn} onClose={() => setDrawerOpen(false)} onCheckout={() => { setDrawerOpen(false); location.hash = 'checkout'; }} onOpenProduct={(id) => { setDrawerOpen(false); openProduct(id); window.scrollTo({ top: 0, behavior: 'smooth' }); }} onChangeQuantity={changeQuantity} onChangeSize={changeSize} onRemove={(key) => setCart((current) => current.filter((item) => item.key !== key))} />
     {toast && <div className="!fixed !left-auto !top-6 !right-6 !bottom-auto !z-[100] !max-w-[calc(100vw-2rem)] !translate-x-0 !translate-y-0 flex items-center gap-3 bg-[#d5ed52]/80 px-4 py-3 text-sm font-semibold text-[#191b17] backdrop-blur-sm" role="status" aria-live="polite"><CheckCircleRoundedIcon className="!h-5 !w-5 shrink-0" aria-hidden="true" /><span>{toast}</span></div>}
   </div>;

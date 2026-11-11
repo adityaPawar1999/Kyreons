@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
@@ -30,6 +30,53 @@ export default function ProfilePage({ user, cart }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [showWelcome, setShowWelcome] = useState(() => sessionStorage.getItem('kyreons-show-welcome') === 'true');
+  const welcomeDialogRef = useRef(null);
+
+  function closeWelcome() {
+    sessionStorage.removeItem('kyreons-show-welcome');
+    setShowWelcome(false);
+  }
+
+  useEffect(() => {
+    function showWelcome() {
+      if (sessionStorage.getItem('kyreons-show-welcome') === 'true') setShowWelcome(true);
+    }
+    window.addEventListener('kyreons:show-welcome', showWelcome);
+    return () => window.removeEventListener('kyreons:show-welcome', showWelcome);
+  }, []);
+
+  useEffect(() => {
+    if (!showWelcome) return undefined;
+    const dialog = welcomeDialogRef.current;
+    const focusable = () => [...(dialog?.querySelectorAll('button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])') || [])].filter((element) => !element.disabled);
+    focusable()[0]?.focus();
+    function handleDialogKeyDown(event) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        sessionStorage.removeItem('kyreons-show-welcome');
+        setShowWelcome(false);
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const items = focusable();
+      if (!items.length) {
+        event.preventDefault();
+        return;
+      }
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+    document.addEventListener('keydown', handleDialogKeyDown);
+    return () => document.removeEventListener('keydown', handleDialogKeyDown);
+  }, [showWelcome]);
 
   useEffect(() => {
     let active = true;
@@ -72,6 +119,8 @@ export default function ProfilePage({ user, cart }) {
       try { await saveCustomerCart(user.uid, user.email, cart); }
       catch { cartSaveFailed = true; }
       await logoutAccount();
+      sessionStorage.removeItem('kyreons-show-welcome');
+      setShowWelcome(false);
       if (cartSaveFailed) window.dispatchEvent(new CustomEvent('kyreons:toast', { detail: 'Logged out, but your cart could not be synced.' }));
       location.hash = 'account/login';
     }
@@ -80,8 +129,10 @@ export default function ProfilePage({ user, cart }) {
   }
 
   const initials = `${profile.firstName?.[0] || user.email?.[0] || 'K'}${profile.lastName?.[0] || ''}`.toUpperCase();
+  const welcomeName = profile.firstName || user.displayName?.trim().split(/\s+/)[0] || 'there';
 
   return <div className="mt-0 space-y-7">
+    {showWelcome && <div className="fixed inset-0 z-[120] grid place-items-center bg-black/55 px-5 py-6 backdrop-blur-sm" role="presentation"><section ref={welcomeDialogRef} className="relative w-full max-w-md border border-neutral-200 bg-[var(--bg)] p-7 text-center shadow-2xl dark:border-neutral-700 sm:p-10" role="dialog" aria-modal="true" aria-labelledby="welcome-title"><span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-[#d5ed52] font-display text-xl font-semibold text-neutral-900">K</span><p className="mt-6 text-[9px] font-semibold tracking-[.2em] text-neutral-500">KYREONS / ACCOUNT</p><h2 id="welcome-title" className="mt-3 font-display text-4xl font-medium tracking-[-.07em] text-neutral-900 dark:text-white">Welcome, {welcomeName}.</h2><p className="mt-3 text-sm leading-6 text-neutral-500">You’re signed in and your account is ready.</p><button type="button" className="mt-7 flex w-full items-center justify-center bg-[#d5ed52] px-5 py-4 text-[10px] font-bold tracking-[.12em] text-neutral-900 transition-colors hover:bg-[#c4dc42]" onClick={closeWelcome}>CONTINUE TO YOUR ACCOUNT<ArrowForwardIcon className="ml-3 !h-4 !w-4" /></button></section></div>}
     <div className="relative h-[287px] overflow-hidden bg-neutral-200 sm:h-[273px] lg:h-[301px]">
       <img className="absolute inset-0 h-full w-full object-cover object-[center_42%]" src="https://images.unsplash.com/photo-1636047250452-6772f6144b3d?auto=format&fit=crop&w=1800&q=80" alt="Streetwear editorial portrait in a graphic T-shirt" />
       <span className="absolute right-3 top-3 bg-black/45 px-2 py-1 text-[8px] font-semibold tracking-[.14em] text-white"><a href="https://unsplash.com/photos/a-man-wearing-a-t-shirt-that-says-out-of-the-ordinary--7oth7kZEo8" target="_blank" rel="noreferrer">PHOTO: MUHAMMAD REZA PAHLEVI / UNSPLASH</a></span>
